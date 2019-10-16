@@ -2,7 +2,8 @@ var _form = document.getElementsByClassName("form-0");
 _form[0].addEventListener('submit', search);
 var allButton = document.getElementById("all");
 allButton.addEventListener('click', function () {
-    document.getElementById("search_box").value='';
+    var _form = document.getElementsByClassName("form-0")[0];
+    _form[0].value='';
     search();
 });
 
@@ -94,9 +95,9 @@ function openDuck (id) {
 
 function search(e) {
     e.preventDefault()
-    debugger
+    
     var ducksRequest = new XMLHttpRequest;
-    var search = document.getElementById("search_box").value;
+    var search = this.search.value;
     var duck_Panel = document.getElementById("duck-detail");
     var list_Panel = document.getElementById("search-list");
 

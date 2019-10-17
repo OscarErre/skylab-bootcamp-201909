@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <script src="https://kit.fontawesome.com/12f9d6a4c1.js" crossorigin="anonymous"></script>
+    <link href="https://fonts.googleapis.com/css?family=Roboto&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./utils/style.css">
+    <title>Duck-App</title>
+</head>
+
+<body>
+    <header class="header">
+        <img class="header__logo" src="./utils/rubber-duck.svg" alt="Duck logo">
+        <h1>Duck-App</h1>
+
+    </header>
+
+    <section class="search">
+
+        <nav class="search__nav nav">
+            <form class="myForm" onsubmit="search(event)">
+                <input class="myForm__search" type="search" placeholder="Are you looking for a special Duck?"> <button> <i class="fas fa-search myForm__button" id="searchButton"></i></button>
+            </form>
+        </nav>
+
+        <main class="search__main main"></main>
+    </section>
+
+
+
+    <section class="result">
+        <header class="result__header header" onclick="goBack()">
+            <!-- <nav class="header__nav"> <i class="fas fa-arrow-circle-left"></i> Wanna come back?</nav> -->
+            <button class="header__nav"> <i class="fas fa-arrow-circle-left"></i> Wanna come back?</button>
+        </header>
+
+        <main class="result__main main"> </main>
+
+    </section>
+    <script src="./utils/main.js"></script>
+
+</body>
+
+</html>

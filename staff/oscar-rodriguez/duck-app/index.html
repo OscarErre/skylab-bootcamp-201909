@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <title>Duck-App</title>
 </head>
@@ -15,14 +15,20 @@
             <form class='form-0'>
                 <input type="text" placeholder="Search.." name="search">
                 <button type="submit"><i class="fa fa-search"></i></button>
-                <button id="all">All</button>
+                <button type="reset" id="all">All</button>
             </form>
         </nav>
     </header>
     <main class="main">
         <section class="main__search" id="search-list"></section>
         <section class="main__duck-detail duck-detail" id="duck-detail"></section>
-    </main> 
-    <script src="main.js"></script>
+    </main>
+
+    <script src="scripts/business/search-ducks/index.js"></script>
+    <script src="scripts/business/retrieve-duck/index.js"></script>
+    <script src="scripts/components/search.js"></script>
+    <script src="scripts/helpers.js"></script>
+    <script src="scripts/utils.js"></script>
+    <script src="scripts/main.js"></script>
 </body>
 </html>

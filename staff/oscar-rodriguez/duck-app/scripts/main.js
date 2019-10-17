@@ -1,13 +1,6 @@
-var _form = document.getElementsByClassName("form-0");
-_form[0].addEventListener('submit', search);
-
-var allButton = document.getElementById("all");
-
-allButton.addEventListener('click', function () {
-
-    listAll();
-
-});
+var search = new Search (document.getElementsByClassName("form-0")[0]);
+search.onSubmit(listSearchResults);
+search.onReset(listAll);
 
 listAll();
 
@@ -16,28 +9,14 @@ function listAll() {
 }
 
 function listSearchResults (query) {
-    searchDucks(query,createList);
+    searchDucks(query,paintListResults);
 }
 
-function searchDucks (query, callback) {
-    call ('GET','https://duckling-api.herokuapp.com/api/search?q='+query,callback);
+function createDuckDetail (id) {
+    retrieveDuck (id, paintDuckDetails);
 }
 
-function call (method, url, callback) {
-    var ducksRequest = new XMLHttpRequest;
-    ducksRequest.open(method, url);
-    
-    ducksRequest.onreadystatechange = function() {
-        if (this.readyState == 4 && this.status == 201) {
-            var ducks = JSON.parse(ducksRequest.responseText);
-            callback(ducks);
-        }
-    };
-    
-    ducksRequest.send();
-}
-
-function createList (ducks) {
+function paintListResults (ducks) {
     var ducksList = document.getElementById("search-list");
     ducksList.innerHTML="";
     
@@ -58,7 +37,7 @@ function createList (ducks) {
             var link = createElement("a",'class',"link",'href', '#'+duck.id);
 
             link.addEventListener('click',function (event){
-                    openDuck(duck.id)});
+                    createDuckDetail(duck.id)});
 
             link.append(li);
             ul.append(link);
@@ -66,16 +45,8 @@ function createList (ducks) {
     });
 }
 
-function retrieveDuck (query, callback) {
-    call('GET','http://duckling-api.herokuapp.com/api/ducks/'+query,callback);
-}
 
-function openDuck (id) {
-
-    retrieveDuck (id, paintDuck);
-}
-
-function paintDuck (duckInfo) {
+function paintDuckDetails (duckInfo) {
 
     var list_Panel = document.getElementById("search-list");
     var duck_Panel = document.getElementById("duck-detail");
@@ -104,7 +75,7 @@ function paintDuck (duckInfo) {
     duck_Panel.append(link);
 }
 
-function search(e) {
+/* function listSearch(e) {
     e.preventDefault()
 
     var search = this.search.value;
@@ -117,18 +88,5 @@ function search(e) {
     }
 
     listSearchResults(search);
-}
+} */
 
-function createElement (elem) {
-    var element = document.createElement(elem);
-
-    for ( let i=1; i<arguments.length; i+=2) {
-
-        if (arguments[i].toLowerCase() === "innerhtml") {
-            element.innerHTML=arguments[i+1];
-        } else {
-            element.setAttribute(arguments[i],arguments[i+1]);
-        }
-    }
-	return element;
-}

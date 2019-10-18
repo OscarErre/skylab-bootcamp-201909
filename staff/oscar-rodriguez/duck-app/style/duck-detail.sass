@@ -1,3 +1,5 @@
+@import button
+
 .duck-detail
     flex-direction: column
     font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif
@@ -15,9 +17,4 @@
         max-width: 99vw
 
     &__back
-        width: 3rem
-        color: whitesmoke
-        background-color: #44af46
-        border-radius: .1rem
-        outline: none
-        border: 1px solid white
+        @extend %button

@@ -14,13 +14,22 @@
         <nav class="header__search-bar">
             <form class='form-0'>
                 <input type="text" placeholder="Search.." name="search">
-                <button type="submit"><i class="fa fa-search"></i></button>
-                <button type="reset" id="all">All</button>
+                <button class="form-0__button" type="submit"><i class="fa fa-search"></i></button>
+                <button class="form-0__button" type="reset" id="all">All</button>
             </form>
         </nav>
     </header>
+    <section class="login">
+        <h1 class="login__title">LOGIN TO ENTER PAGE</h1>
+        <form class="login__form">
+            <input type="text" name="username" placeholder="username">
+            <input type="password" name="password">
+            <button class="login__button" name="login">LOGIN</button>
+        </form>
+        <p class="login__error hide">Incorrect User or Passaword. Please, try again</p>
+    </section>
     <main class="main">
-        <section class="main__search" id="search-list"></section>
+        <section class="main__search hide" id="search-list"></section>
         <section class="main__duck-detail duck-detail hide" id="duck-detail"></section>
     </main>
     
@@ -29,6 +38,7 @@
     <script src="scripts/business/search-ducks/index.js"></script>
     <script src="scripts/business/retrieve-duck/index.js"></script>
     <script src="scripts/components/component.js"></script>
+    <script src="scripts/components/login.js"></script>
     <script src="scripts/components/detail.js"></script>
     <script src="scripts/components/registro.js"></script>
     <script src="scripts/components/results.js"></script>

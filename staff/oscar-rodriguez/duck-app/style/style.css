@@ -27,12 +27,25 @@
   .header__search-bar {
     height: 10%; }
 
+.login {
+  border: 1px solid red;
+  height: 50%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center; }
+  .login__form {
+    display: flex;
+    flex-direction: column;
+    align-items: center; }
+
 .main {
   display: flex;
   justify-content: center;
   background: linear-gradient(to bottom, rgba(255, 234, 42, 0.829), rgba(241, 136, 60, 0.822));
   background-size: 100%;
-  background-repeat: no-repeat; }
+  background-repeat: no-repeat;
+  min-height: 65vh; }
   .main__duck-detail, .main__search-list {
     width: 80vw; }
 
@@ -76,6 +89,14 @@
     background: linear-gradient(to bottom right, rgba(255, 94, 0, 0.847), rgba(148, 54, 0, 0.847));
     color: whitesmoke; }
 
+.login__button, .duck-detail__back {
+  width: 3rem;
+  color: whitesmoke;
+  background-color: #44af46;
+  border-radius: 0.1rem;
+  outline: none;
+  border: 1px solid white; }
+
 .duck-detail {
   flex-direction: column;
   font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS", sans-serif;
@@ -88,13 +109,6 @@
   .duck-detail__image {
     align-self: center;
     max-width: 99vw; }
-  .duck-detail__back {
-    width: 3rem;
-    color: whitesmoke;
-    background-color: #44af46;
-    border-radius: 0.1rem;
-    outline: none;
-    border: 1px solid white; }
 
 * {
   box-sizing: border-box;

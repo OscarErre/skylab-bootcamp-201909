@@ -8,7 +8,11 @@
 
 var search = new Search(document.getElementsByClassName('search')[0]);
 search.onSubmit(function (query) {
-    searchDucks(query, results.render);
+    searchDucks(query, results.render); // NOTE it works thanks to the internal binding that takes place in Results constructor (SEE file)
+    // searchDucks(query, results.render.bind(results)); // NOTE alternative to previous
+    // searchDucks(query, function(ducks) { // NOTE alternative to previous
+    //     results.render(ducks);
+    // });
 });
 
 var results = new Results(document.getElementsByClassName('results')[0]);

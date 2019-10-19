@@ -1,10 +1,10 @@
-function Login (container) {
+function SignUp (container) {
     Component.call(this, container);
 }
 
-Login.extend(Component);
+SignUp.extend(Component);
 
-Login.prototype.onSubmit = function (callback) {
+SignUp.prototype.onSubmit = function (callback) {
     this.container.addEventListener('submit', function (event) {
         event.preventDefault();
 

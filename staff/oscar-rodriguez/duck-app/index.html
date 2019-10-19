@@ -12,23 +12,35 @@
     <header class="header">
         <h1 class="header__tittle">The Ducks App</h1>
         <nav class="header__search-bar">
-            <form class='form-0'>
+            <form class='form-0 hide'>
                 <input type="text" placeholder="Search.." name="search">
                 <button class="form-0__button" type="submit"><i class="fa fa-search"></i></button>
                 <button class="form-0__button" type="reset" id="all">All</button>
             </form>
         </nav>
     </header>
-    <section class="login">
-        <h1 class="login__title">LOGIN TO ENTER PAGE</h1>
-        <form class="login__form">
-            <input type="text" name="username" placeholder="username">
-            <input type="password" name="password">
-            <button class="login__button" name="login">LOGIN</button>
-        </form>
-        <p class="login__error hide">Incorrect User or Passaword. Please, try again</p>
-    </section>
     <main class="main">
+        <section class="register-container">
+            <section class="login">
+                <h1 class="login__title">Sign in</h1>
+                <form class="login__form">
+                    <input type="email" name="username" placeholder="uremail@mail.com">
+                    <input type="password" name="password">
+                    <button class="login__button" name="login">LOGIN</button>
+                </form>
+                <p class="login__error hide">Incorrect User or Passaword. Please, try again</p>
+            </section>
+            - or -
+            <section class="sign-up">
+                <h1 class="sign-up__title"><a href="#" class="link">Sign up</a></h1>
+                <form class="sign-up__form hide">
+                    <input type="email" name="username" placeholder="uremail@mail.com">
+                    <input type="password" name="password">
+                    <button class="sign-up__button" name="sign-up">LOGIN</button>
+                </form>
+                <p class="login__error hide">Incorrect User or Passaword. Please, try again</p>
+            </section>
+        </section>
         <section class="main__search hide" id="search-list"></section>
         <section class="main__duck-detail duck-detail hide" id="duck-detail"></section>
     </main>
@@ -39,6 +51,7 @@
     <script src="scripts/business/retrieve-duck/index.js"></script>
     <script src="scripts/components/component.js"></script>
     <script src="scripts/components/login.js"></script>
+    <script src="scripts/components/sign-up.js"></script>
     <script src="scripts/components/detail.js"></script>
     <script src="scripts/components/registro.js"></script>
     <script src="scripts/components/results.js"></script>

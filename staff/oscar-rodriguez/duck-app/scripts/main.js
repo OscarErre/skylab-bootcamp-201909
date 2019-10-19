@@ -1,24 +1,35 @@
 var duck_Detail = document.getElementById("duck-detail");
-var search_List = document.getElementById("search-list"); 
-
-var search = new Search (document.getElementsByClassName("form-0")[0]);
-search.onSubmit(function (query) {
-    debugger
-    searchDucks(query,paintListResults);
-});
-
-search.onReset(function () {
-    searchDucks('',paintListResults);
-});
+var search_List = document.getElementById("search-list");
 
 var login = new Login (document.getElementsByClassName("login__form")[0]);
-login.onSubmit(function (succes) { (succes) ? loginOk() : document.getElementsByClassName("login__error")[0].classList.remove("hide") });
+login.onSubmit(succes => {
+    (succes) ? loginOk() : document.getElementsByClassName("login__error")[0].classList.remove("hide") }
+);
 
+var newUser = new SignUp (document.getElementsByClassName("sign-up__form")[0]);
+newUser.onSubmit(function (succes) { (succes) ? registerOk() : document.getElementsByClassName("sign-up__error")[0].classList.remove("hide") });
+
+function registerOk (){
+    loginOk();
+}
 
 function loginOk() {
 
+    var search_form = document.getElementsByClassName("form-0")[0];
+    search_form.classList.remove("hide");
+
+    var search = new Search (search_form);
+    search.onSubmit(function (query) {
+        searchDucks(query,paintListResults);
+    });
+    
+    search.onReset(function () {
+        searchDucks('',paintListResults);
+    });
+    
+
     document.getElementsByClassName("login__error")[0].classList.add("hide");
-    document.getElementsByClassName("login")[0].classList.add("hide")
+    document.getElementsByClassName("register-container")[0].classList.add("hide")
 
         searchDucks('',paintListResults);
 
@@ -49,7 +60,6 @@ function loginOk() {
                     duck_Panel.pintar (duckInfo);
                 });
             };
-
             return item;
         }
    

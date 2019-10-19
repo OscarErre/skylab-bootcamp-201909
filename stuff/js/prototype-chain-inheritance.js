@@ -177,3 +177,67 @@ console.log(noly.__proto__.toString === albert.__proto__.toString); // toString 
 console.log(noly.toString === noly.__proto__.toString); // true
 console.log(noly.__proto__.__proto__.toString === albert.__proto__.__proto__.toString); // true
 console.log(noly.__proto__.__proto__.toString()); // WARN! undefined, it applies on the last __proto__ of this chain, not the instance of noly itself!
+
+// DEMO with static method create in all types (Person, Venus and Mars)
+
+function Person(name, surname, /*gender*/) {
+	this.name = name;
+	this.surname = surname;
+	//this.gender = gender;
+	//this.breath = function() { return 'sss sss sss'; };
+}
+
+Person.prototype.breath = function() { return 'sss sss sss'; };
+Person.prototype.snore = function() { return 'RRR RRR RRR'; };
+Person.prototype.sleep = function() { return 'Zzz Zzz Zzz'; };
+Person.prototype.reproduce = function(person) {
+	if (!(person instanceof Person)) throw Error('cannot reproduce');
+
+	return Person.create(person);
+};
+Person.create = function(person) {
+	return new Person('', person.surname);
+};
+
+function Mars(name, surname) {
+	Person.call(this, name, surname);
+}
+
+//Mars.prototype = new Person()
+Mars.prototype = Object.create(Person.prototype);
+Mars.prototype.constructor = Mars;
+
+Mars.prototype.sitOnThrone = function() { return 'Plof... Plof...'; };
+Mars.prototype.cry = function() { return 'Snif.'; };
+Mars.prototype.reproduce = function(venus) {
+	return Mars.create(venus);
+};
+Mars.create = function(venus) {
+	if (!(venus instanceof Venus)) throw Error('cannot reproduce');
+
+	return Math.random() > .5? new Venus('', venus.surname) : new Mars('', venus.surname);
+};
+
+function Venus(name, surname) {
+	Person.call(this, name, surname);
+}
+
+Venus.prototype = Object.create(Person.prototype);
+Venus.prototype.constructor = Venus;
+
+Venus.prototype.coordinate = function() { return 'Blah blah blah blah blah blah...'; };
+Venus.prototype.eatMarsWithPotatoes = function() { return 'Ñam Ñam Ñam...'; };
+Venus.prototype.reproduce = function(mars) {
+	return Venus.create(mars);
+};
+Venus.create = function(mars) {
+	if (!(mars instanceof Mars)) throw Error('cannot reproduce');
+
+	return Math.random() > .5? new Venus('', mars.surname) : new Mars('', mars.surname);
+};
+
+const eve = new Venus('Eve', '...')
+const adam = new Mars('Adam', '...')
+
+//const child = eve.reproduce(adam)
+const child = Venus.create(adam) // the child of a godness and adam

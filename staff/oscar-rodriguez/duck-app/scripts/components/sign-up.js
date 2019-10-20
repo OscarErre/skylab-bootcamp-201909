@@ -8,7 +8,12 @@ SignUp.prototype.onSubmit = function (callback) {
     this.container.addEventListener('submit', function (event) {
         event.preventDefault();
 
-        callback(this.username.value === "mail@mail.com" && this.password.value === "123");
+        var credentials =   {   "username"  :   this.username.value,
+                                "password"  :   this.password.value,
+                                "name"      :   this.name.value,
+                                "surname"   :   this.surname.value
+                            }
+        callback(credentials);
     });
 }
 

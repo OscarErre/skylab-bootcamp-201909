@@ -10,6 +10,7 @@
 </head>
 <body> 
     <header class="header">
+        <div class="header__user-space hide">Bienvenido <a class="link"><span class="user-name"></span></a></div>
         <h1 class="header__tittle">The Ducks App</h1>
         <nav class="header__search-bar">
             <form class='form-0 hide'>
@@ -22,7 +23,7 @@
     <main class="main">
         <section class="register-container">
             <section class="login">
-                <h1 class="login__title">Sign in</h1>
+                <h1 class="login__title"><a class="link">Sign in</a></h1>
                 <form class="login__form">
                     <input type="email" name="username" placeholder="uremail@mail.com">
                     <input type="password" name="password">
@@ -30,16 +31,20 @@
                 </form>
                 <p class="login__error hide">Incorrect User or Passaword. Please, try again</p>
             </section>
-            - or -
+            <span class="or">- or -</span>
             <section class="sign-up">
-                <h1 class="sign-up__title"><a href="#" class="link">Sign up</a></h1>
-                <form class="sign-up__form hide">
-                    <input type="email" name="username" placeholder="uremail@mail.com">
-                    <input type="password" name="password">
-                    <button class="sign-up__button" name="sign-up">LOGIN</button>
-                </form>
-                <p class="login__error hide">Incorrect User or Passaword. Please, try again</p>
-            </section>
+                <a class="link">
+                    <h1 class="sign-up__title">Sign up</h1>
+                    <form class="sign-up__form hide">
+                        <label>Enter your email: <input type="email" name="username" placeholder="uremail@mail.com"></label>
+                        <label>Enter your password: <input type="password" name="password"></label>
+                        <label>Name: <input type="text" name="name" placeholder="name"></label>
+                        <label>Surname: <input type="text" name="surname" placeholder="surname"></label>
+                        <button class="sign-up__button" name="sign-up">LOGIN</button>
+                    </form>
+                    <p class="login__error hide">Incorrect User or Passaword. Please, try again</p>
+                </a>
+                </section>
         </section>
         <section class="main__search hide" id="search-list"></section>
         <section class="main__duck-detail duck-detail hide" id="duck-detail"></section>
@@ -47,8 +52,11 @@
     
     <script src="scripts/helpers.js"></script>
     <script src="scripts/utils.js"></script>
-    <script src="scripts/business/search-ducks/index.js"></script>
-    <script src="scripts/business/retrieve-duck/index.js"></script>
+    <script src="scripts/logic/search-ducks/index.js"></script>
+    <script src="scripts/logic/retrieve-user/index.js"></script>
+    <script src="scripts/logic/register-user/index.js"></script>
+    <script src="scripts/logic/authenticate-user/index.js"></script>
+    <script src="scripts/logic/retrieve-duck/index.js"></script>
     <script src="scripts/components/component.js"></script>
     <script src="scripts/components/login.js"></script>
     <script src="scripts/components/sign-up.js"></script>

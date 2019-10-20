@@ -1,4 +1,4 @@
-function fetch (method, url, callback) {
+/* function fetch (method, url, callback) {
     var ducksRequest = new XMLHttpRequest;
     ducksRequest.open(method, url);
     
@@ -7,7 +7,26 @@ function fetch (method, url, callback) {
     };
     
     ducksRequest.send();
+} */
+
+
+function fetch(method, url, headers, body, callback) {
+    var xhr = new XMLHttpRequest;
+
+    xhr.open(method, url);
+
+    xhr.onreadystatechange = function () {
+        callback(this);
+    };
+
+    if (headers) 
+        for (let key in headers)
+            xhr.setRequestHeader(key, headers[key])
+
+    body? xhr.send(JSON.stringify(body)) : xhr.send();
 }
+
+
 
 /**
  * create an html element the specified atributes. The atribute and it's value, must be sent on pairs.

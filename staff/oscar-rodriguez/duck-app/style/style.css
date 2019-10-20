@@ -7,25 +7,43 @@
     color: #fa7000; }
 
 .header {
-  padding: 1rem;
-  height: 35vh;
-  background: linear-gradient(to right, rgba(235, 252, 0, 0.855), #f56702);
+  padding: 0.1rem;
+  height: 100vh;
+  width: 100vw;
+  background: linear-gradient(to bottom, rgba(235, 252, 0, 0.855), #f56702);
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center; }
+  .header__image {
+    cursor: pointer;
+    filter: drop-shadow(0.5rem 0.5rem 0.2rem black);
+    height: 70%; }
+    @media only screen and (max-width: 720px) {
+      .header__image {
+        width: 60%;
+        height: unset; } }
+    .header__image:hover {
+      filter: brightness(1.1) drop-shadow(0.5rem 0.5rem 0.2rem black); }
   .header__tittle {
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    height: 90%;
-    font-size: 4rem;
+    font-size: 1rem;
     color: whitesmoke;
-    text-shadow: 0.1rem 0.1rem 0.2rem #15c924;
-    margin-bottom: 2rem; }
-  .header__search-bar {
-    height: 10%; }
+    font-family: Calibri; }
+  .header--login {
+    flex-direction: row;
+    justify-content: space-evenly;
+    height: 10vh;
+    background: linear-gradient(to right, rgba(235, 252, 0, 0.855), #f56702); }
+    .header--login .header__image {
+      filter: unset; }
+      @media only screen and (max-width: 720px) {
+        .header--login .header__image {
+          width: unset;
+          height: 80%; } }
 
 .register-container {
   margin: 2rem;
@@ -36,10 +54,7 @@
   flex-direction: column;
   justify-content: space-evenly;
   align-items: center;
-  width: 27rem;
-  max-height: 16rem;
-  color: #292929;
-  background: whitesmoke; }
+  width: 50%; }
 
 .sign-up {
   padding: 0.2rem;
@@ -51,11 +66,10 @@
   justify-content: center;
   align-items: center; }
   .sign-up__form {
-    background: silver;
     margin: 1rem;
     display: flex;
     flex-direction: column;
-    align-items: flex-end; }
+    align-items: center; }
 
 .login {
   border: 1px solid red;
@@ -76,10 +90,9 @@
 .main {
   display: flex;
   justify-content: center;
-  background: linear-gradient(to bottom, rgba(255, 234, 42, 0.829), rgba(241, 136, 60, 0.822));
+  background: linear-gradient(to bottom, rgba(231, 231, 231, 0.829), rgba(196, 196, 196, 0.822));
   background-size: 100%;
-  background-repeat: no-repeat;
-  min-height: 65vh; }
+  background-repeat: no-repeat; }
   .main__duck-detail, .main__search-list {
     width: 80vw; }
 
@@ -142,7 +155,7 @@
     font-size: 0.9rem; }
   .duck-detail__image {
     align-self: center;
-    max-width: 99vw; }
+    width: 100%; }
 
 * {
   box-sizing: border-box;

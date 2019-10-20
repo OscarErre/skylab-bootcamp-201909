@@ -1,6 +1,18 @@
 const duck_Detail = document.getElementById("duck-detail");
 const search_List = document.getElementById("search-list");
 
+const header = document.getElementsByClassName("header")[0];
+const start = document.getElementsByClassName("header__image")[0];
+const main = document.getElementsByClassName("main")[0];
+const search_bar = document.getElementsByClassName("search-bar")[0];
+
+start.addEventListener('click', () => {
+    //start.classList.add("hide")
+    header.classList.add("header--login")
+    main.classList.remove("hide")
+
+})
+
 const onSignUpClick = document.getElementsByClassName("sign-up")[0];
 const onSignInClick = document.getElementsByClassName("login")[0];
 
@@ -43,6 +55,8 @@ newUser.onSubmit ( credentials => {
 });
 
 function loginOk(credentials) {
+
+    search_bar.classList.remove("hide")
 
     retrieveUser(credentials.id,credentials.token,(error,userData) => {
         

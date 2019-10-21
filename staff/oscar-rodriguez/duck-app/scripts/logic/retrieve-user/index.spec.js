@@ -8,26 +8,30 @@ describe('logic - retrieve user', () => {
         email = `email-${Math.random()}@mail.com`
         password = `password-${Math.random()}`
 
-        call('POST', 'https://skylabcoders.herokuapp.com/api/user', { name, surname, username: email, password }, undefined, result => {
-        })
-
         call('POST', 'https://skylabcoders.herokuapp.com/api/auth', { username: email, password }, undefined, result => {
             if (result.error)
                 done(new Error(result.error))
-            else {
-                credentials = result
-                done(undefined, credentials)
-            }
+            else
+                done((done) => {
+                    call('POST', 'https://skylabcoders.herokuapp.com/api/user', { name, surname, username: email, password }, undefined, result => {
+                        if (result.error)
+                            done(new Error(result.error))
+                        else {
+                            credentials = result
+                            done(undefined, credentials)
+                        }
+                    })
+                })
         })
     })
-debugger
+
     it('should succeed on correct credentials', done => {
         retrieveUser(credentials.id, credentials.token, (error, response) => {
             expect(error).toBeUndefined()
 
             expect(response).toBeDefined()
 
-            const { name, surname, username } = response
+            const { name, surname, username } = response.data
 
             expect(name).toBeDefined()
             expect(typeof name).toBe('string')

@@ -13,16 +13,7 @@
         <img class="header__image" src="img/duck.png">
         <div class="header__user-space hide">Bienvenido <a class="link"><span class="user-name"></span></a></div>
         <h1 class="header__tittle">The Ducks App</h1>
-    </header>
-    <nav class="search-bar hide">
-        <form class='form-0'>
-            <input type="text" placeholder="Search.." name="search">
-            <button class="form-0__button" type="submit"><i class="fa fa-search"></i></button>
-            <button class="form-0__button" type="reset" id="all">All</button>
-        </form>
-    </nav>
-    <main class="main hide">
-        <section class="register-container">
+        <section class="register-container hide">
             <section class="login">
                 <h1 class="login__title"><a class="link">Sign in</a></h1>
                 <form class="login__form">
@@ -36,15 +27,24 @@
             <section class="sign-up">
                 <h1 class="sign-up__title"><a class="link">Sign up</a></h1>
                 <form class="sign-up__form hide">
-                    <label>Enter your email: <br><input type="email" name="username" placeholder="uremail@mail.com"></label>
-                    <label>Enter your password: <br><input type="password" name="password"></label>
-                    <label>Name: <br><input type="text" name="name" placeholder="name"></label>
-                    <label>Surname: <br><input type="text" name="surname" placeholder="surname"></label>
+                    <label class="label">Enter your email: <br><input type="email" name="username" placeholder="uremail@mail.com"></label>
+                    <label class="label">Enter your password: <br><input type="password" name="password"></label>
+                    <label class="label">Name: <br><input type="text" name="name" placeholder="name"></label>
+                    <label class="label">Surname: <br><input type="text" name="surname" placeholder="surname"></label>
                     <button class="sign-up__button" name="sign-up">LOGIN</button>
                 </form>
-                <p class="login__error hide">Incorrect User or Passaword. Please, try again</p>
+                <p class="sign-up hide">Incorrect User or Passaword. Please, try again</p>
             </section>
         </section>
+    </header>
+    <nav class="search-bar hide">
+        <form class='form-0'>
+            <input type="text" placeholder="Search.." name="search">
+            <button class="form-0__button" type="submit"><i class="fa fa-search"></i></button>
+            <button class="form-0__button" type="reset" id="all">All</button>
+        </form>
+    </nav>
+    <main class="main hide">
         <section class="main__search hide" id="search-list"></section>
         <section class="main__duck-detail duck-detail hide" id="duck-detail"></section>
     </main>
@@ -57,6 +57,7 @@
     <script src="scripts/logic/authenticate-user/index.js"></script>
     <script src="scripts/logic/retrieve-duck/index.js"></script>
     <script src="scripts/components/component.js"></script>
+    <script src="scripts/components/view.js"></script>
     <script src="scripts/components/login.js"></script>
     <script src="scripts/components/sign-up.js"></script>
     <script src="scripts/components/detail.js"></script>

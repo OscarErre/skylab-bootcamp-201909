@@ -1,6 +1,5 @@
 .link {
   text-decoration: none;
-  color: #f1f1f1;
   cursor: pointer; }
   .link:hover {
     text-decoration: underline;
@@ -48,17 +47,18 @@
 .register-container {
   margin: 2rem;
   padding: 1rem;
-  border: 1px solid green;
   border-radius: 1rem;
   display: flex;
   flex-direction: column;
   justify-content: space-evenly;
   align-items: center;
-  width: 50%; }
+  width: 70%;
+  max-width: 20rem;
+  color: #292929; }
 
 .sign-up {
   padding: 0.2rem;
-  border: 1px solid red;
+  border: 1px solid #444343;
   border-radius: 1rem;
   width: 100%;
   display: flex;
@@ -66,13 +66,23 @@
   justify-content: center;
   align-items: center; }
   .sign-up__form {
-    margin: 1rem;
+    margin: 0.5rem 1rem 0.5rem 1rem;
     display: flex;
     flex-direction: column;
-    align-items: center; }
+    align-items: center;
+    justify-content: center;
+    width: 100%; }
+    .sign-up__form .label {
+      width: 99%;
+      font-size: 80%; }
+      .sign-up__form .label > input {
+        width: 100%;
+        background: #ffa600a6;
+        border: none;
+        border-bottom: 1px solid tomato; }
 
 .login {
-  border: 1px solid red;
+  border: 1px solid #444343;
   padding: 0.2rem;
   width: 100%;
   border-radius: 1rem;
@@ -80,19 +90,26 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  background: silver; }
+  cursor: pointer; }
+  .login:hover {
+    border: 1px solid whitesmoke; }
   .login__form {
-    margin: 1rem;
+    margin: 0.5rem 1rem 0.5rem 1rem;
     display: flex;
     flex-direction: column;
-    align-items: center; }
+    align-items: center;
+    width: 100%;
+    font-size: 80%; }
+    .login__form > input {
+      width: 100%;
+      background: unset;
+      border: none;
+      border-bottom: 1px solid tomato;
+      text-align: center; }
 
 .main {
   display: flex;
-  justify-content: center;
-  background: linear-gradient(to bottom, rgba(231, 231, 231, 0.829), rgba(196, 196, 196, 0.822));
-  background-size: 100%;
-  background-repeat: no-repeat; }
+  justify-content: center; }
   .main__duck-detail, .main__search-list {
     width: 80vw; }
 
@@ -120,8 +137,7 @@
   flex-wrap: wrap; }
   .search-list__entry {
     margin: 0.5rem;
-    width: 45vw;
-    height: 5rem;
+    height: 10rem;
     display: flex;
     flex-direction: row;
     justify-content: left;
@@ -131,10 +147,10 @@
     border: 0.1rem solid #dbd833;
     padding-left: 1%;
     box-shadow: 0.2rem 0.2rem 0.1rem tomato;
-    background: linear-gradient(to bottom right, #36f73f, #55bd00); }
-  .search-list__entry:hover {
-    background: linear-gradient(to bottom right, rgba(255, 94, 0, 0.847), rgba(148, 54, 0, 0.847));
+    background: linear-gradient(to bottom right, #36f73f, #55bd00);
     color: whitesmoke; }
+  .search-list__entry:hover {
+    background: linear-gradient(to bottom right, rgba(255, 94, 0, 0.847), rgba(148, 54, 0, 0.847)); }
 
 .sign-up__button, .login__button, .duck-detail__back {
   width: 3rem;
@@ -142,7 +158,8 @@
   background-color: #44af46;
   border-radius: 0.1rem;
   outline: none;
-  border: 1px solid white; }
+  border: 1px solid white;
+  margin: 0.2rem; }
 
 .duck-detail {
   flex-direction: column;

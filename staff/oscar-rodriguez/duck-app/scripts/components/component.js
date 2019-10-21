@@ -13,3 +13,11 @@ Component.prototype.add = function(child) {
 
     this.container.append(child.container);
 };
+
+Component.prototype.show = function () {
+    this.container.classList.remove("hide")
+}
+
+Component.prototype.hide = function () {
+    this.container.classList.add("hide")
+}

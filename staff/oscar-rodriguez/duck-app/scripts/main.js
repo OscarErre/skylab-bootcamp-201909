@@ -1,15 +1,16 @@
 const duck_Detail = document.getElementById("duck-detail");
 const search_List = document.getElementById("search-list");
 
+const header_ = new View (document.getElementsByClassName("header")[0])
+
 const header = document.getElementsByClassName("header")[0];
 const start = document.getElementsByClassName("header__image")[0];
-const main = document.getElementsByClassName("main")[0];
+const registerPanel = document.getElementsByClassName("register-container")[0];
 const search_bar = document.getElementsByClassName("search-bar")[0];
 
 start.addEventListener('click', () => {
-    //start.classList.add("hide")
-    header.classList.add("header--login")
-    main.classList.remove("hide")
+    //header.classList.add("header--login")
+    registerPanel.classList.remove("hide")
 
 })
 
@@ -47,7 +48,7 @@ var newUser = new SignUp (document.getElementsByClassName("sign-up__form")[0]);
 newUser.onSubmit ( credentials => {    
     registerUser(credentials.name, credentials.surname, credentials.username, credentials.password,(error,credentials)=> {
         if (error)
-            document.getElementsByClassName("login__error")[0].classList.remove("hide")
+            document.getElementsByClassName("sign-up")[0].classList.remove("hide")
         else
             debugger
             doLogin(credentials.username,credentials.password);
@@ -129,5 +130,4 @@ function loginOk(credentials) {
             }
         }    
     });
-    
 }

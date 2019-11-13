@@ -1,6 +1,6 @@
 const { expect } = require('chai')
 const authenticateUser = require ('../authenticate-user')
-const users = require ('../../data/users.json')
+const users = require ('../../data/users/index')
 const fs = require('fs').promises
 const path = require('path')
 

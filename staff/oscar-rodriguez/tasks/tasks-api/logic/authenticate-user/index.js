@@ -1,7 +1,6 @@
 const validate = require('../../utils/validate')
-const users = require('../../data/users.json')
-const fs = require('fs')
-const path = require('path')
+const users = require('../../data/users/index')
+const { CredentialError } = require('../../utils/errors')
 
 module.exports = function (username, password) {
 
@@ -14,11 +13,9 @@ module.exports = function (username, password) {
         
         const user = users.find(user=>user.username===username && user.password===password)
 
-        if (!!user)
-            reject(new ContentError('wrong credentials, incorrect username or password'))
-        else {
-            user.lastAccess = new Date()
-            resolve(user.id)
-        }
+        if (!user) return reject(new Credentialsrror('wrong credentials, incorrect username or password'))
+
+        user.lastAccess = new Date()
+        resolve(user.id)
     })
 }

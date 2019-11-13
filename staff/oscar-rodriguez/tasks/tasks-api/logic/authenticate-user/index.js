@@ -1,0 +1,24 @@
+const validate = require('../../utils/validate')
+const users = require('../../data/users.json')
+const fs = require('fs')
+const path = require('path')
+
+module.exports = function (username, password) {
+
+    validate.string(username)
+    validate.string.notVoid('username', username)
+    validate.string(password)
+    validate.string.notVoid('password', password)
+
+    return new Promise ((resolve, reject) => {
+        
+        const user = users.find(user=>user.username===username && user.password===password)
+
+        if (!!user)
+            reject(new ContentError('wrong credentials, incorrect username or password'))
+        else {
+            user.lastAccess = new Date()
+            resolve(user.id)
+        }
+    })
+}

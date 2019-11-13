@@ -1,6 +1,6 @@
 const validate = require('../../utils/validate')
 const users = require('../../data/users/index')
-const { CredentialError } = require('../../utils/errors')
+const { CredentialsError } = require('../../utils/errors')
 
 module.exports = function (username, password) {
 
@@ -13,7 +13,7 @@ module.exports = function (username, password) {
         
         const user = users.find(user=>user.username===username && user.password===password)
 
-        if (!user) return reject(new Credentialsrror('wrong credentials, incorrect username or password'))
+        if (!user) return reject(new CredentialsError('wrong credentials, incorrect username or password'))
 
         user.lastAccess = new Date()
         resolve(user.id)

@@ -1,9 +1,9 @@
 const { expect } = require('chai')
 const registerUser = require('.')
 const { ContentError } = require('../../utils/errors')
-const users = require('../../data/users')
+const users = require('../../data/users/index')
 
-describe.only('logic - register user', () => {
+describe('logic - register user', () => {
     let name, surname, email, username, password
 
     beforeEach(() => {

@@ -1,43 +1,36 @@
 const { expect } = require('chai')
-const authenticateUser = require('../authenticate-user')
-const users = require('../../data/users/index')
+const users = require('../../data/users')('test')
+const authenticateUser = require('.')
 const { ContentError, CredentialsError } = require('../../utils/errors')
+const { random } = Math
 const uuid = require('uuid/v4')
 
 describe('logic - authenticate user', () => {
+    before(() => users.load())
+
     let id, name, surname, email, username, password
 
     beforeEach(() => {
         id = uuid()
-        name = `name-${Math.random()}`
-        surname = `surname-${Math.random()}`
-        email = `email-${Math.random()}@mail.com`
-        username = `username-${Math.random()}`
-        password = `password-${Math.random()}`
+        name = `name-${random()}`
+        surname = `surname-${random()}`
+        email = `email-${random()}@mail.com`
+        username = `username-${random()}`
+        password = `password-${random()}`
 
-        users.push({ id, name, surname, email, username, password })   
+        users.data.push({ id, name, surname, email, username, password })
     })
 
-    it('should succeed on correct credentials', () => {
-        return authenticateUser(username, password)
+    it('should succeed on correct credentials', () =>
+        authenticateUser(username, password)
             .then(_id => {
-                expect(_id).to.exist
-
                 expect(_id).to.exist
                 expect(typeof _id).to.equal('string')
                 expect(_id.length).to.be.greaterThan(0)
-            })
-    })
 
-    it('should create lastAccess', () => {
-        return authenticateUser (username, password)
-            .then (_id => {
-                const user = users.find (user=>user.id === _id)
-
-                expect (user.lastAccess).to.exist
-                expect (user.lastAccess).to.be.an.instanceOf(Date)
+                expect(_id).to.equal(id)
             })
-    })
+    )
 
     describe('when wrong credentials', () => {
         it('should fail on wrong username', () => {
@@ -50,7 +43,7 @@ describe('logic - authenticate user', () => {
                     expect(error).to.be.an.instanceOf(CredentialsError)
 
                     const { message } = error
-                    expect(message).to.equal(`wrong credentials, incorrect username or password`)
+                    expect(message).to.equal(`wrong credentials`)
                 })
         })
 
@@ -64,7 +57,7 @@ describe('logic - authenticate user', () => {
                     expect(error).to.be.an.instanceOf(CredentialsError)
 
                     const { message } = error
-                    expect(message).to.equal(`wrong credentials, incorrect username or password`)
+                    expect(message).to.equal(`wrong credentials`)
                 })
         })
     })
@@ -90,4 +83,6 @@ describe('logic - authenticate user', () => {
         expect(() => authenticateUser(email, '')).to.throw(ContentError, 'password is empty or blank')
         expect(() => authenticateUser(email, ' \t\r')).to.throw(ContentError, 'password is empty or blank')
     })
+
+    // TODO other cases
 })

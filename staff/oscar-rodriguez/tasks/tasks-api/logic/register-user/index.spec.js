@@ -1,17 +1,20 @@
 const { expect } = require('chai')
+const users = require('../../data/users')('test')
 const registerUser = require('.')
 const { ContentError } = require('../../utils/errors')
-const users = require('../../data/users/index')
+const { random } = Math
 
 describe('logic - register user', () => {
+    before(() => users.load())
+
     let name, surname, email, username, password
 
     beforeEach(() => {
-        name = `name-${Math.random()}`
-        surname = `surname-${Math.random()}`
-        email = `email-${Math.random()}@mail.com`
-        username = `username-${Math.random()}`
-        password = `password-${Math.random()}`
+        name = `name-${random()}`
+        surname = `surname-${random()}`
+        email = `email-${random()}@mail.com`
+        username = `username-${random()}`
+        password = `password-${random()}`
     })
 
     it('should succeed on correct credentials', () =>
@@ -19,7 +22,7 @@ describe('logic - register user', () => {
             .then(response => {
                 expect(response).to.be.undefined
 
-                const user = users.find(user => user.username === username)
+                const user = users.data.find(user => user.username === username)
 
                 expect(user).to.exist
 
@@ -28,12 +31,17 @@ describe('logic - register user', () => {
                 expect(user.email).to.equal(email)
                 expect(user.username).to.equal(username)
                 expect(user.password).to.equal(password)
+
+                const { id } = user
+                expect(id).to.exist
+                expect(id).to.be.a('string')
+                expect(id).to.have.length.greaterThan(0)
             })
     )
 
     describe('when user already exists', () => {
-        beforeEach( () => {
-            users.push({ name, surname, email, username, password })
+        beforeEach(() => {
+            users.data.push({ name, surname, email, username, password })
         })
 
         it('should fail on already existing user', () =>
@@ -47,7 +55,7 @@ describe('logic - register user', () => {
                     expect(error.message).to.exist
                     expect(typeof error.message).to.equal('string')
                     expect(error.message.length).to.be.greaterThan(0)
-                    expect(error.message).to.equal(`${username} already exists`)
+                    expect(error.message).to.equal(`user with username ${username} already exists`)
                 })
         )
     })

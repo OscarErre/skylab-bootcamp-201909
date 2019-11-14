@@ -1,21 +1,23 @@
 const validate = require('../../utils/validate')
-const users = require('../../data/users/index')
+const users = require('../../data/users')()
 const { CredentialsError } = require('../../utils/errors')
+const jwt = require ('jsonwebtoken')
 
 module.exports = function (username, password) {
-
     validate.string(username)
     validate.string.notVoid('username', username)
     validate.string(password)
     validate.string.notVoid('password', password)
 
-    return new Promise ((resolve, reject) => {
+    return new Promise((resolve, reject) => {
+        const user = users.data.find(user => user.username === username && user.password === password)
+
+        if (!user) return reject(new CredentialsError('wrong credentials'))
+
+        user.lastAccess = new Date
         
-        const user = users.find(user=>user.username===username && user.password===password)
-
-        if (!user) return reject(new CredentialsError('wrong credentials, incorrect username or password'))
-
-        user.lastAccess = new Date()
-        resolve(user.id)
+        users.persist()
+            .then(() => resolve(user.id))
+            .catch(reject)
     })
 }

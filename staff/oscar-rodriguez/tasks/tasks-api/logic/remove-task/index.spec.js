@@ -7,7 +7,7 @@ const { random } = Math
 const uuid = require('uuid/v4')
 
 
-describe('logic - create Task', () => {
+describe('logic - remove Task', () => {
     let id, name, surname, email, username, password
     let taskId, title, description
 
@@ -30,7 +30,7 @@ describe('logic - create Task', () => {
     })
 
     it('should succeed on correct id', () =>
-        removeTask(taskId)
+        removeTask(id, taskId)
             .then(response => {
                 expect(response).to.not.exist
 
@@ -41,7 +41,7 @@ describe('logic - create Task', () => {
     )
 
     it('should fail on wrong id', () =>
-        removeTask(id)
+        removeTask(id, taskId)
             .then(() => {
                 throw Error('should not reach this point')
             })

@@ -1,9 +1,9 @@
-module.exports = class NotFoundError extends Error {
+module.exports = class ConflictError extends Error {
     constructor(message) {
         super(message)
 
-        Error.captureStackTrace(this, NotFoundError)
+        Error.captureStackTrace(this, ConflictError)
 
-        this.name = NotFoundError.name
+        this.name = ConflictError.name
     }
 }

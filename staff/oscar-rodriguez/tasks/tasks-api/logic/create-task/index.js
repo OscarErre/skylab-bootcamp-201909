@@ -1,8 +1,7 @@
 const validate = require('../../utils/validate')
-const users = require('../../data/users')()
-const tasks = require('../../data/tasks')()
-const uuid = require('uuid/v4')
 const { NotFoundError } = require('../../utils/errors')
+const database = require('../../utils/database')
+const { ObjectId } = database
 
 module.exports = function (id, title, description) {
     validate.string(id)
@@ -12,24 +11,33 @@ module.exports = function (id, title, description) {
     validate.string(description)
     validate.string.notVoid('description', description)
 
+    const client = database()
 
-    return new Promise((resolve, reject) => {
+    return client.connect()
+        .then(connection => {
+            const db = connection.db()
 
-        const user = users.data.find(user => user.id === id)
+            users = db.collection('users')
+            tasks = db.collection('tasks')
 
-        if (!user) return reject(new NotFoundError(`user with id ${id} not found`))
+            return users.findOne({ _id: ObjectId(id) })
+                .then(user => {
+                    if (!user) throw new NotFoundError(`user with id ${id} not found`)
 
-        const task = {
-            id: uuid(),
-            user: id,
-            title,
-            description,
-            status: 'TODO',
-            date: new Date
-        }
+                    const task = {
+                        user: ObjectId(id),
+                        title,
+                        description,
+                        status: 'TODO',
+                        date: new Date
+                    }
 
-        tasks.data.push(task)
-        tasks.persist().then(() => resolve(task.id)).catch(reject)
+                    return tasks.insertOne(task)
+                })
+                .then(result => {
+                    if (!result.insertedCount) throw new Error('failed to create task')
 
-    })
+                    return result.insertedId.toString()
+                })
+        })
 }

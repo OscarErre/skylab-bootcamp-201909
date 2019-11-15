@@ -2,14 +2,16 @@ const { expect } = require('chai')
 const users = require('../../data/users')('test')
 const tasks = require('../../data/tasks')('test')
 const modifyTask = require('.')
-const { random, floor } = Math
+const { random } = Math
 const uuid = require('uuid')
-const { ContentError } = require('../../utils/errors')
+require('../../utils/array-random')
+const { NotFoundError, ConflictError, ContentError } = require('../../utils/errors')
 
 describe('logic - modify task', () => {
     before(() => Promise.all([users.load(), tasks.load()]))
 
-    let id, name, surname, email, username, password, taskIds, title, description
+    const statuses = ['TODO', 'DOING', 'REVIEW', 'DONE']
+    let id, name, surname, email, username, password, taskIds, titles, descriptions
 
     beforeEach(() => {
         id = uuid()
@@ -22,96 +24,239 @@ describe('logic - modify task', () => {
         users.data.push({ id, name, surname, email, username, password })
 
         taskIds = []
+        titles = []
+        descriptions = []
 
-        for (let i = 0; i < 5; i++) {
+        for (let i = 0; i < 10; i++) {
             const task = {
                 id: uuid(),
                 user: id,
                 title: `title-${random()}`,
                 description: `description-${random()}`,
-                status: 'REVIEW',
+                status: statuses.random(),
                 date: new Date
             }
 
             tasks.data.push(task)
+
             taskIds.push(task.id)
+            titles.push(task.title)
+            descriptions.push(task.description)
         }
-    })
 
-
-    it('should succed on modify a property of a correct id', () => {
-        let testId = taskIds[floor(random() * taskIds.length)]
-
-        let testTask = tasks.data.find(task => task.id === testId)
-
-        return modifyTask(testId, "TEST_TITLE")
-            .then(() => {
-                const task = tasks.data.find(task => task.id === testId)
-                expect(task.title).to.be.equal("TEST_TITLE")
-                expect(task.description).to.be.equal(testTask.description)
-                expect(task.status).to.be.equal(testTask.status)
-           
-                testId = taskIds[floor(random() * taskIds.length)]
-                testTask = tasks.data.find(task => task.id === testId)
-
-                return modifyTask(testId, undefined, "Anim sint culpa et aute ipsum tempor exercitation aliqua amet aute.")
-                    .then(() => {
-                        const task = tasks.data.find(task => task.id === testId)
-                        expect(task.description).to.be.equal("Anim sint culpa et aute ipsum tempor exercitation aliqua amet aute.")
-                        expect(task.title).to.be.equal(testTask.title)
-                        expect(task.status).to.be.equal(testTask.status)
-
-                        testId = taskIds[floor(random() * taskIds.length)]
-                        testTask = tasks.data.find(task => task.id === testId)
-                        
-                        return modifyTask(testId, undefined, undefined, "DONE")
-                            .then(() => {
-                                const task = tasks.data.find(task => task.id === testId)
-                                expect(task.status).to.be.equal("DONE")
-                                expect(task.title).to.be.equal(testTask.title)
-                                expect(task.description).to.be.equal(testTask.description)
-                            })
-                    })
+        for (let i = 0; i < 10; i++)
+            tasks.data.push({
+                id: uuid(),
+                user: uuid(),
+                title: `title-${random()}`,
+                description: `description-${random()}`,
+                status: statuses.random(),
+                date: new Date
             })
     })
 
-    it('should fail on wrong id', () =>
-        modifyTask('wrong')
-            .then(() => {
-                throw Error('should not reach this point')
+    it('should succeed on correct user and task data', () => {
+        const taskId = taskIds.random()
+        const newTitle = `new-title-${random()}`
+        const newDescription = `new-description-${random()}`
+        const newStatus = statuses.random()
+
+        return modifyTask(id, taskId, newTitle, newDescription, newStatus)
+            .then(response => {
+                expect(response).to.not.exist
+
+                const task = tasks.data.find(({id}) => id === taskId)
+
+                expect(task.user).to.equal(id)
+
+                expect(task.title).to.exist
+                expect(task.title).to.be.a('string')
+                expect(task.title).to.have.length.greaterThan(0)
+                expect(task.title).to.equal(newTitle)
+
+                expect(task.description).to.exist
+                expect(task.description).to.be.a('string')
+                expect(task.description).to.have.length.greaterThan(0)
+                expect(task.description).to.equal(newDescription)
+
+                expect(task.status).to.exist
+                expect(task.status).to.be.a('string')
+                expect(task.status).to.have.length.greaterThan(0)
+                expect(task.status).to.equal(newStatus)
+
+                expect(task.date).to.exist
+                expect(task.date).to.be.an.instanceOf(Date)
+
+                expect(task.lastAccess).to.exist
+                expect(task.lastAccess).to.be.an.instanceOf(Date)
             })
+    })
+
+    it('should succeed on correct user and new task data, except for title', () => {
+        const taskId = taskIds.random()
+        const title = tasks.data.find(({id}) => id === taskId).title
+        const newDescription = `new-description-${random()}`
+        const newStatus = statuses.random()
+
+        return modifyTask(id, taskId, undefined, newDescription, newStatus)
+            .then(response => {
+                expect(response).to.not.exist
+
+                const task = tasks.data.find(({id}) => id === taskId)
+
+                expect(task.user).to.equal(id)
+
+                expect(task.title).to.exist
+                expect(task.title).to.be.a('string')
+                expect(task.title).to.have.length.greaterThan(0)
+                expect(task.title).to.equal(title)
+
+                expect(task.description).to.exist
+                expect(task.description).to.be.a('string')
+                expect(task.description).to.have.length.greaterThan(0)
+                expect(task.description).to.equal(newDescription)
+
+                expect(task.status).to.exist
+                expect(task.status).to.be.a('string')
+                expect(task.status).to.have.length.greaterThan(0)
+                expect(task.status).to.equal(newStatus)
+
+                expect(task.date).to.exist
+                expect(task.date).to.be.an.instanceOf(Date)
+
+                expect(task.lastAccess).to.exist
+                expect(task.lastAccess).to.be.an.instanceOf(Date)
+            })
+    })
+
+    it('should succeed on correct user and new task data, except for description', () => {
+        const taskId = taskIds.random()
+        const newTitle = `new-title-${random()}`
+        const description = tasks.data.find(({id}) => id === taskId).description
+        const newStatus = statuses.random()
+
+        return modifyTask(id, taskId, newTitle, undefined, newStatus)
+            .then(response => {
+                expect(response).to.not.exist
+
+                const task = tasks.data.find(({id}) => id === taskId)
+
+                expect(task.user).to.equal(id)
+
+                expect(task.title).to.exist
+                expect(task.title).to.be.a('string')
+                expect(task.title).to.have.length.greaterThan(0)
+                expect(task.title).to.equal(newTitle)
+
+                expect(task.description).to.exist
+                expect(task.description).to.be.a('string')
+                expect(task.description).to.have.length.greaterThan(0)
+                expect(task.description).to.equal(description)
+
+                expect(task.status).to.exist
+                expect(task.status).to.be.a('string')
+                expect(task.status).to.have.length.greaterThan(0)
+                expect(task.status).to.equal(newStatus)
+
+                expect(task.date).to.exist
+                expect(task.date).to.be.an.instanceOf(Date)
+
+                expect(task.lastAccess).to.exist
+                expect(task.lastAccess).to.be.an.instanceOf(Date)
+            })
+    })
+
+    it('should succeed on correct user and new task data, except for status', () => {
+        const taskId = taskIds.random()
+        const newTitle = `new-title-${random()}`
+        const newDescription = `new-description-${random()}`
+        const status = tasks.data.find(({id}) => id === taskId).status
+
+        return modifyTask(id, taskId, newTitle, newDescription, undefined)
+            .then(response => {
+                expect(response).to.not.exist
+
+                const task = tasks.data.find(({id}) => id === taskId)
+
+                expect(task.user).to.equal(id)
+
+                expect(task.title).to.exist
+                expect(task.title).to.be.a('string')
+                expect(task.title).to.have.length.greaterThan(0)
+                expect(task.title).to.equal(newTitle)
+
+                expect(task.description).to.exist
+                expect(task.description).to.be.a('string')
+                expect(task.description).to.have.length.greaterThan(0)
+                expect(task.description).to.equal(newDescription)
+
+                expect(task.status).to.exist
+                expect(task.status).to.be.a('string')
+                expect(task.status).to.have.length.greaterThan(0)
+                expect(task.status).to.equal(status)
+
+                expect(task.date).to.exist
+                expect(task.date).to.be.an.instanceOf(Date)
+
+                expect(task.lastAccess).to.exist
+                expect(task.lastAccess).to.be.an.instanceOf(Date)
+            })
+    })
+
+    it('should fail on unexisting user and correct task data', () => {
+        const id = uuid()
+        const taskId = taskIds.random()
+        const newTitle = `new-title-${random()}`
+        const newDescription = `new-description-${random()}`
+        const newStatus = statuses.random()
+
+        return modifyTask(id, taskId, newTitle, newDescription, newStatus)
+            .then(() => { throw new Error('should not reach this point')})
             .catch(error => {
                 expect(error).to.exist
+                expect(error).to.be.an.instanceOf(NotFoundError)
+                expect(error.message).to.equal(`user with id ${id} not found`)
             })
-    )
-
-    it('should fail on incorrect id, title, description, status type and content', () => {
-        expect(() => modifyTask(1)).to.throw(TypeError, '1 is not a string')
-        expect(() => modifyTask(true)).to.throw(TypeError, 'true is not a string')
-        expect(() => modifyTask([])).to.throw(TypeError, ' is not a string')
-        expect(() => modifyTask({})).to.throw(TypeError, '[object Object] is not a string')
-        expect(() => modifyTask(undefined)).to.throw(TypeError, 'undefined is not a string')
-        expect(() => modifyTask(null)).to.throw(TypeError, 'null is not a string')
-
-        expect(() => modifyTask('')).to.throw(ContentError, 'id is empty or blank')
-        expect(() => modifyTask(' \t\r')).to.throw(ContentError, 'id is empty or blank')
-
-        expect(() => modifyTask(id, 1)).to.throw(TypeError, '1 is not a string')
-        expect(() => modifyTask(id, true)).to.throw(TypeError, 'true is not a string')
-        expect(() => modifyTask(id, [])).to.throw(TypeError, ' is not a string')
-        expect(() => modifyTask(id, {})).to.throw(TypeError, '[object Object] is not a string')
-        //expect(() => modifyTask(id, null)).to.throw(TypeError, 'null is not a string')
-
-        expect(() => modifyTask(id, title, 1)).to.throw(TypeError, '1 is not a string')
-        expect(() => modifyTask(id, title, true)).to.throw(TypeError, 'true is not a string')
-        expect(() => modifyTask(id, title, [])).to.throw(TypeError, ' is not a string')
-        expect(() => modifyTask(id, title, {})).to.throw(TypeError, '[object Object] is not a string')
-        //expect(() => modifyTask(id, title, null)).to.throw(TypeError, 'null is not a string')
-
-        expect(() => modifyTask(id, title, description, 1)).to.throw(TypeError, '1 is not a string')
-        expect(() => modifyTask(id, title, description, true)).to.throw(TypeError, 'true is not a string')
-        expect(() => modifyTask(id, title, description, [])).to.throw(TypeError, ' is not a string')
-        expect(() => modifyTask(id, title, description, {})).to.throw(TypeError, '[object Object] is not a string')
-        //expect(() => modifyTask(id, title, description, null)).to.throw(TypeError, 'null is not a string')
     })
+
+    it('should fail on correct user and unexisting task data', () => {
+        const taskId = uuid()
+        const newTitle = `new-title-${random()}`
+        const newDescription = `new-description-${random()}`
+        const newStatus = statuses.random()
+
+        return modifyTask(id, taskId, newTitle, newDescription, newStatus)
+            .then(() => { throw new Error('should not reach this point')})
+            .catch(error => {
+                expect(error).to.exist
+                expect(error).to.be.an.instanceOf(NotFoundError)
+                expect(error.message).to.equal(`user does not have task with id ${taskId}`)
+            })
+    })
+
+    it('should fail on correct user and wrong task data', () => {
+        const taskId = tasks.data.find(task => task.user !== id).id
+        const newTitle = `new-title-${random()}`
+        const newDescription = `new-description-${random()}`
+        const newStatus = statuses.random()
+
+        return modifyTask(id, taskId, newTitle, newDescription, newStatus)
+            .then(() => { throw new Error('should not reach this point')})
+            .catch(error => {
+                expect(error).to.exist
+                expect(error).to.be.an.instanceOf(ConflictError)
+                expect(error.message).to.equal(`user with id ${id} does not correspond to task with id ${taskId}`)
+            })
+    })
+
+    it('should fail on correct user and wrong task status', () => {
+        const taskId = taskIds.random()
+        const newTitle = `new-title-${random()}`
+        const newDescription = `new-description-${random()}`
+        const newStatus = 'wrong-status'
+
+        expect(() => modifyTask(id, taskId, newTitle, newDescription, newStatus)).to.throw(ContentError, `${newStatus} does not match any of the valid status values: ${statuses}`)
+    })
+
+    // TODO other test cases
 })

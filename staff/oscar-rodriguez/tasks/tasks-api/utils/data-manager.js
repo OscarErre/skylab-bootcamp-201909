@@ -16,7 +16,7 @@ class DataManager {
     }
 
     persist() {
-        return fs.writeFile(this._path, JSON.stringify(this._data, undefined, 4), 'utf8')
+        return fs.writeFile(this._path, JSON.stringify(this._data, undefined, 4))
     }
 
     get data() {

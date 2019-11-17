@@ -1,32 +1,54 @@
 const { expect } = require('chai')
-const tasks = require('../../data/tasks')('test')
-const users = require('../../data/users')('test')
+require('dotenv').config()
+const { env: { DB_URL_TEST } } = process
 const removeTask = require('.')
-const { ContentError } = require('../../utils/errors')
+const { NotFoundError, ContentError } = require('../../utils/errors')
 const { random } = Math
 const uuid = require('uuid/v4')
+const database = require('../../utils/database')
+const { ObjectId } = database
+require('../../utils/array-random')
 
 
 describe('logic - remove Task', () => {
+    let client, users, tasks
     let id, name, surname, email, username, password
-    let taskId, title, description
+    let taskId, title, description, status, date
 
-    before(() => Promise.all ([tasks.load(), users.load()]))
-    
+    before(() => {
+        client = database(DB_URL_TEST)
+
+        return client.connect()
+            .then(connection => {
+                const db = connection.db()
+
+                users = db.collection('users')
+                tasks = db.collection('tasks')
+            })
+    })
+
     beforeEach(() => {
-        id = uuid()
         name = `name-${random()}`
         surname = `surname-${random()}`
         email = `email-${random()}@mail.com`
         username = `username-${random()}`
         password = `password-${random()}`
-    
-        users.data.push({ id, name, surname, email, username, password })
 
-        taskId = uuid()
-        title = `title-${random()}`
-        description = 'Nulla velit nulla amet do deserunt. Ut ipsum commodo culpa aute non officia adipisicing deserunt occaecat reprehenderit sunt exercitation exercitation'
-        tasks.data.push({ id: taskId, user: id, title, description })
+        return users.insertOne({ name, surname, email, username, password })
+            .then (result=> {
+                id = result.insertedId.toString()
+
+                title = `title-${random()}`
+                description = `description-${random()}`
+                status = ['TODO', 'DOING', 'REVIEW', 'DONE'].random()
+                date = new Date
+
+                return tasks.insertOne({ user: id, title, description, status, date})
+                    .then ( result => {
+                        taskId = result.insertedId.toString()
+                    })
+            })
+
     })
 
     it('should succeed on correct id', () =>
@@ -34,19 +56,57 @@ describe('logic - remove Task', () => {
             .then(response => {
                 expect(response).to.not.exist
 
-                const task = tasks.data.find(task => task.id === taskId)
-
-                expect(task).to.not.exist
+                return tasks.findOne({_id: ObjectId(taskId)})
             })
+            .then (task => expect(task).to.not.exist)
     )
 
-    it('should fail on wrong id', () =>
-        removeTask(id, taskId)
+    it("should fail on valid id doesn't match any user", () =>
+        removeTask('wrong1234567', taskId)
             .then(() => {
                 throw Error('should not reach this point')
             })
             .catch(error => {
                 expect(error).to.exist
+                expect(error).to.be.an.instanceOf(NotFoundError)
+                expect(error.message).to.equal(`user with id wrong1234567 not found`)
+            })
+    )
+
+    it("should fail on valid taskId doesn't match any task", () =>
+        removeTask(id, 'wrong1234567')
+            .then(() => {
+                throw Error('should not reach this point')
+            })
+            .catch(error => {
+                expect(error).to.exist
+                expect(error).to.be.an.instanceOf(NotFoundError)
+                expect(error.message).to.equal(`task with id wrong1234567 does not matcht to this user`)
+            })
+    )
+
+
+    it("should fail on wrong id", () =>
+        removeTask('wrong', taskId)
+            .then(() => {
+                throw Error('should not reach this point')
+            })
+            .catch(error => {
+                expect(error).to.exist
+                expect(error).to.be.an.instanceOf(ContentError)
+                expect(error.message).to.equal(`wrong id: wrong must be a string of 12 length`)
+            })
+    )
+
+    it("should fail on wrong taskId", () =>
+        removeTask(id, 'wrong')
+            .then(() => {
+                throw Error('should not reach this point')
+            })
+            .catch(error => {
+                expect(error).to.exist
+                expect(error).to.be.an.instanceOf(ContentError)
+                expect(error.message).to.equal(`wrong taskId: wrong must be a string of 12 length`)
             })
     )
 
@@ -61,6 +121,17 @@ describe('logic - remove Task', () => {
         expect(() => removeTask('')).to.throw(ContentError, 'id is empty or blank')
         expect(() => removeTask(' \t\r')).to.throw(ContentError, 'id is empty or blank')
 
+        expect(() => removeTask(id, 1)).to.throw(TypeError, '1 is not a string')
+        expect(() => removeTask(id, true)).to.throw(TypeError, 'true is not a string')
+        expect(() => removeTask(id, [])).to.throw(TypeError, ' is not a string')
+        expect(() => removeTask(id, {})).to.throw(TypeError, '[object Object] is not a string')
+        expect(() => removeTask(id, undefined)).to.throw(TypeError, 'undefined is not a string')
+        expect(() => removeTask(id, null)).to.throw(TypeError, 'null is not a string')
+ 
+        expect(() => removeTask(id, '')).to.throw(ContentError, 'taskId is empty or blank')
+        expect(() => removeTask(id, ' \t\r')).to.throw(ContentError, 'taskId is empty or blank')
+
     })
 
+    after(() => client.close())
 })

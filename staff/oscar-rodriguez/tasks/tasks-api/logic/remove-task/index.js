@@ -1,25 +1,46 @@
 const validate = require('../../utils/validate')
-const tasks = require('../../data/tasks')()
-const users = require('../../data/users')()
-const { NotFoundError, ConflictError } = require('../../utils/errors')
+const { NotFoundError, ContentError } = require('../../utils/errors')
+const database = require('../../utils/database')
+const { ObjectId } = database
 
 module.exports = function (id, taskId) {
     validate.string(id)
     validate.string.notVoid('id', id)
-    
-    return new Promise((resolve, reject) => {
-        const user = users.data.find(user => user.id === id)
+    validate.string(taskId)
+    validate.string.notVoid('taskId', taskId)
 
-        if (!user) return reject(new NotFoundError(`user with id ${id} not found`))
+    const client = database()
 
-        const index = tasks.data.findIndex(task => task.id === taskId)
+    return client.connect()
+        .then(connection => {
 
-        if (index<0) return reject(new NotFoundError(`task with id ${taskId} not found`))
+            const users = connection.db().collection('users')
+            try {
+                id = ObjectId(id)
+            }
+            catch {
+                throw new ContentError(`wrong id: ${id} must be a string of 12 length`)
+            }
 
-        if (tasks.data[index].user !== id) return reject(new ConflictError(`user with id ${id} does not correspond to task with id ${taskId}`))
+            return users.findOne({ _id: id })
+                .then(user => {
+                    if (!user) throw new NotFoundError(`user with id ${id.id.toString()} not found`)
 
-        tasks.data.splice(index,1)
-        tasks.persist().then(() => resolve()).catch(reject)
+                    const tasks = connection.db().collection('tasks')
 
+                    try {
+                        taskId = ObjectId(taskId)
+                    }
+                    catch {
+                        throw new ContentError(`wrong taskId: ${taskId} must be a string of 12 length`)
+                    }
+
+                    return tasks.deleteOne({ _id: taskId , user: id.toString()})
+                        .then(result => {
+                            if (!result.deletedCount) throw new NotFoundError(`task with id ${taskId.id.toString()} does not matcht to this user`)
+                        })
+
+            })
     })
+
 }

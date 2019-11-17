@@ -1,21 +1,48 @@
 const validate = require('../../utils/validate')
-const users = require('../../data/users')()
-const tasks = require('../../data/tasks')()
-const { NotFoundError } = require('../../utils/errors')
+const { NotFoundError , ContentError} = require('../../utils/errors')
+const database = require('../../utils/database')
+const { ObjectId } = database
 
 module.exports = function (id) {
     validate.string(id)
     validate.string.notVoid('id', id)
 
-    return new Promise((resolve, reject) => {
-        const user = users.data.find(user => user.id === id)
+    const client = database()
 
-        if (!user) return reject(new NotFoundError(`user with id ${id} not found`))
+    return client.connect()
+        .then(connection => {
+            const users = connection.db().collection('users')
+            try {
+                id = ObjectId(id)
+            }
+            catch {
+                throw new ContentError(`wrong id: ${id} must be a string of 12 length`)
+            }
 
-        const _tasks = tasks.data.filter(({ user }) => user === id)
+            return users.findOne({ _id: id })
+                .then(user => {
+                    if (!user) throw new NotFoundError(`user with id ${id.id.toString()} not found`)
+                    const tasks = connection.db().collection('tasks')
 
-        _tasks.forEach(task => task.lastAccess = new Date)
+                    return tasks.find({ user: user._id.toString() }).toArray()
+                        .then(results => {
+                            const acces = new Date
+                            results.forEach(task => {
+                                task.id = task._id.toString()
+                                delete task._id
+                                task.lastAccess = acces
+                                return task
+                            })
 
-        tasks.persist().then(() => resolve(_tasks)).catch(reject)
-    })
+                            return tasks.updateMany({ user: user._id.toString() }, { $set: { lastAccess: acces } })
+                                .then(result => {
+                                    if (!result.modifiedCount) throw Error('could not update user')
+                                    return results
+                                })
+                        })
+
+                })
+
+
+        })
 }

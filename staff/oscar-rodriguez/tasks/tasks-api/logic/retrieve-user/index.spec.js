@@ -1,24 +1,34 @@
+require('dotenv').config()
+const { env: { DB_URL_TEST } } = process
 const { expect } = require('chai')
 const { random } = Math
-const users = require('../../data/users')('test')
 const retrieveUser = require('.')
-const uuid = require('uuid/v4')
-const { NotFoundError } = require('../../utils/errors')
+const { NotFoundError, ContentError} = require('../../utils/errors')
+const database = require('../../utils/database')
 
 describe('logic - retrieve user', () => {
-    before(() => users.load())
+    let client, users
+
+    before(() => {
+        client = database(DB_URL_TEST)
+
+        return client.connect()
+            .then(connection => users = connection.db().collection('users'))
+    })
 
     let id, name, surname, email, username, password
 
     beforeEach(() => {
-        id = uuid()
         name = `name-${random()}`
         surname = `surname-${random()}`
         email = `email-${random()}@mail.com`
         username = `username-${random()}`
         password = `password-${random()}`
 
-        users.data.push({ id, name, surname, email, username, password })
+        return users.insertOne({ name, surname, email, username, password })
+            .then(result => {
+                id = result.insertedId.toString()
+            })
     })
 
     it('should succeed on correct user id', () =>
@@ -34,8 +44,8 @@ describe('logic - retrieve user', () => {
             })
     )
 
-    it('should fail on wrong user id', () => {
-        const id = 'wrong'
+    it("should fail on a valid id that doesn't correspond any user", () => {
+        const id = 'wrong1234567'
 
         return retrieveUser(id)
             .then(() => {
@@ -48,5 +58,31 @@ describe('logic - retrieve user', () => {
             })
     })
 
-    // TODO other cases
+    it("should fail on a invalid id", () => {
+        const id = 'wrong'
+
+        return retrieveUser(id)
+            .then(() => {
+                throw Error('should not reach this point')
+            })
+            .catch(error => {
+                expect(error).to.exist
+                expect(error).to.be.an.instanceOf(ContentError)
+                expect(error.message).to.equal(`wrong id: ${id} must be a string of 12 length`)
+            })
+    })
+
+    it('should fail on incorrect type and content', () => {
+        expect(() => retrieveUser(1)).to.throw(TypeError, '1 is not a string')
+        expect(() => retrieveUser(true)).to.throw(TypeError, 'true is not a string')
+        expect(() => retrieveUser([])).to.throw(TypeError, ' is not a string')
+        expect(() => retrieveUser({})).to.throw(TypeError, '[object Object] is not a string')
+        expect(() => retrieveUser(undefined)).to.throw(TypeError, 'undefined is not a string')
+        expect(() => retrieveUser(null)).to.throw(TypeError, 'null is not a string')
+
+        expect(() => retrieveUser('')).to.throw(ContentError, 'id is empty or blank')
+        expect(() => retrieveUser(' \t\r')).to.throw(ContentError, 'id is empty or blank')
+    })
+
+    after (()=> client.close())
 })

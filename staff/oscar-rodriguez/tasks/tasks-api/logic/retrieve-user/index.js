@@ -1,22 +1,35 @@
 const validate = require('../../utils/validate')
-const users = require('../../data/users')()
-const { NotFoundError } = require('../../utils/errors')
+const { NotFoundError, ContentError } = require('../../utils/errors')
+const database = require('../../utils/database')
+const { ObjectId } = database
 
 module.exports = function (id) {
     validate.string(id)
     validate.string.notVoid('id', id)
 
-    return new Promise((resolve, reject) => {
-        const user = users.data.find(user => user.id === id)
+    const client = database()
 
-        if (!user) return reject(new NotFoundError(`user with id ${id} not found`))
+    return client.connect()
+        .then(connection => {
+            const users = connection.db().collection('users')
+            try {
+                id = ObjectId(id)
+            }
+            catch {
+                throw new ContentError(`wrong id: ${id} must be a string of 12 length`)
+            }
+            return users.findOne({ _id: id })
+                .then(user => {
+                    if (!user) throw new NotFoundError(`user with id ${id.id} not found`)
 
-        user.lastAccess = new Date
+                    const { _id } = user
 
-        users.persist().then(() => {
-            const { name, surname, email, username } = user
-
-            resolve({ id, name, surname, email, username })
+                    return users.updateOne({ _id }, { $set: { lastAccess: new Date } })
+                        .then(result => {
+                            if (!result.modifiedCount) throw Error('could not update user')
+                            const { _id, name, surname, username, email } = user
+                            return ({ id: _id.toString(), name, surname, username, email })
+                        })
+                })
         })
-    })
 }

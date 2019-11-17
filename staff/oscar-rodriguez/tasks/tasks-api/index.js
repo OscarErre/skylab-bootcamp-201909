@@ -3,7 +3,7 @@ require('dotenv').config()
 const express = require('express')
 const bodyParser = require('body-parser')
 const { name, version } = require('./package.json')
-const { registerUser, authenticateUser, retrieveUser, createTask, listTasks, modifyTask } = require('./logic')
+const { registerUser, authenticateUser, retrieveUser, createTask, listTasks, modifyTask, removeTask } = require('./logic')
 const { ConflictError, CredentialsError, NotFoundError } = require('./utils/errors')
 const jwt = require('jsonwebtoken')
 const { argv: [, , port], env: { SECRET, PORT = port || 8080, DB_URL } } = process
@@ -144,7 +144,7 @@ api.delete('/tasks/:taskId', tokenVerifier, (req, res) => {
     try {
         const { id, params: { taskId } } = req
         removeTask(id, taskId)
-            .then(()=> res.send())
+            .then(()=> res.end())
             .catch(error => {
                 const { message } = error
 
@@ -152,14 +152,13 @@ api.delete('/tasks/:taskId', tokenVerifier, (req, res) => {
                     return res.status(404).json({ message })
                 if (error instanceof ContentError)
                     return res.status(400).json({ message })
+
+                res.status(500).json({ message })
             })
 
     } catch ({ message }) {
         res.status(400).json({ message })
     }
-
-
-    res.send('TODO')
 })
 
 database(DB_URL)

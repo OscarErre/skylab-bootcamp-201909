@@ -1,13 +1,27 @@
 const validate = require('../../utils/validate')
-const users = require('../../data/users')()
-const tasks = require('../../data/tasks')()
-const { NotFoundError, ConflictError } = require('../../utils/errors')
+const { NotFoundError, ContentError } = require('../../utils/errors')
+const database = require('../../utils/database')
+const { ObjectId } = database
 
 module.exports = function (id, taskId, title, description, status) {
     validate.string(id)
     validate.string.notVoid('id', id)
+    try {
+        id = ObjectId(id)
+    }
+    catch {
+        throw new ContentError(`wrong id: ${id} must be a string of 12 length`)
+    }
+
     validate.string(taskId)
-    validate.string.notVoid('task id', taskId)
+    validate.string.notVoid('taskId', taskId)
+    try {
+        taskId = ObjectId(taskId)
+    }
+    catch {
+        throw new ContentError(`wrong taskId: ${taskId} must be a string of 12 length`)
+    }
+
     if (title) {
         validate.string(title)
         validate.string.notVoid('title', title)
@@ -22,22 +36,40 @@ module.exports = function (id, taskId, title, description, status) {
         validate.matches('status', status, 'TODO', 'DOING', 'REVIEW', 'DONE')
     }
 
-    return new Promise((resolve, reject) => {
-        const user = users.data.find(user => user.id === id)
+    const client = database()
+    return client.connect()
+        .then (connection => {
+            const users = connection.db().collection('users')
+            const tasks = connection.db().collection('tasks')
+    
+            return users.findOne({_id: id})
+                .then (user => {
+                    if (!user) throw new NotFoundError(`user with id ${id.id.toString()} not found`)
+            
+                    return  tasks.findOne({_id: taskId, user: id.toString()})
+                        .then (task => {
+                            if (!task) throw new NotFoundError(`user does not have task with id ${taskId.id.toString()}`)
+                                        
+                            title && (task.title = title)
+                            description && (task.description = description)
+                            status && (task.status = status)
+                            task.lastAccess = new Date
+                    
+                            return tasks.updateOne({_id : task._id}, { $set: {
+                                        title: task.title,
+                                        description: task.description,
+                                        status: task.status,
+                                        lastAccess: task.lastAccess
+                            }})
+                            .then(result => {
+                                if (!result.modifiedCount) throw Error('could not update user')
+                            })
 
-        if (!user) return reject(new NotFoundError(`user with id ${id} not found`))
+                        })
 
-        const task = tasks.data.find(({ id }) => id === taskId)
 
-        if (!task) return reject(new NotFoundError(`user does not have task with id ${taskId}`))
 
-        if (task.user !== id) return reject(new ConflictError(`user with id ${id} does not correspond to task with id ${taskId}`))
+                })
 
-        title && (task.title = title)
-        description && (task.description = description)
-        status && (task.status = status)
-        task.lastAccess = new Date
-
-        tasks.persist().then(resolve).catch(reject)
     })
 }

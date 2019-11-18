@@ -7,6 +7,8 @@ module.exports = function (id, title, description) {
     validate.string(id)
     validate.string.notVoid('id', id)
 
+    if (!ObjectId.isValid(id)) throw new ContentError(`wrong id: ${id} must be a string of 12 length`)
+    id = ObjectId(id)
     
     validate.string(title)
     validate.string.notVoid('title', title)
@@ -17,12 +19,6 @@ module.exports = function (id, title, description) {
     
     return client.connect()
     .then(connection => {
-            try {
-                id = ObjectId(id)
-            }
-            catch {
-                throw new ContentError(`wrong id: ${id} must be a string of 12 length`)
-            }
             const db = connection.db()
 
             users = db.collection('users')

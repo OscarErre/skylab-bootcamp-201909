@@ -86,28 +86,12 @@ describe('logic - remove Task', () => {
     )
 
 
-    it("should fail on wrong id", () =>
-        removeTask('wrong', taskId)
-            .then(() => {
-                throw Error('should not reach this point')
-            })
-            .catch(error => {
-                expect(error).to.exist
-                expect(error).to.be.an.instanceOf(ContentError)
-                expect(error.message).to.equal(`wrong id: wrong must be a string of 12 length`)
-            })
+    it("should fail on invalid id", () =>
+        expect (() => removeTask('wrong', taskId, newTitle, newDescription, newStatus).to.throw(ContentError, `wrong id: wrong must be a string of 12 length`))
     )
 
-    it("should fail on wrong taskId", () =>
-        removeTask(id, 'wrong')
-            .then(() => {
-                throw Error('should not reach this point')
-            })
-            .catch(error => {
-                expect(error).to.exist
-                expect(error).to.be.an.instanceOf(ContentError)
-                expect(error.message).to.equal(`wrong taskId: wrong must be a string of 12 length`)
-            })
+    it("should fail on invalid taskId", () =>
+        expect (() => removeTask(id, 'wrong', newTitle, newDescription, newStatus).to.throw(ContentError, `wrong taskId: wrong must be a string of 12 length`))
     )
 
     it('should fail on incorrect id type and content', () => {

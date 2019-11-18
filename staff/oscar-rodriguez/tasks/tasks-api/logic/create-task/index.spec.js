@@ -7,7 +7,7 @@ const database = require('../../utils/database')
 const { ObjectId } = database
 const {ContentError, NotFoundError } = require('../../utils/errors')
 
-describe('logic - create task', () => {
+describe ('logic - create task', () => {
     let client, users, tasks
 
     before(() => {
@@ -74,15 +74,7 @@ describe('logic - create task', () => {
     )
 
     it("should fail on invalid id", () =>
-        createTask('wrong', title, description)
-            .then(() => {
-                throw Error('should not reach this point')
-            })
-            .catch(error => {
-                expect(error).to.exist
-                expect(error).to.be.an.instanceOf(ContentError)
-                expect(error.message).to.equal(`wrong id: wrong must be a string of 12 length`)
-            })
+        expect (() => createTask('wrong', title, description).to.throw(ContentError, `wrong id: wrong must be a string of 12 length`))
     )
 
     it('should fail on incorrect id type and content', () => {

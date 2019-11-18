@@ -7,17 +7,15 @@ module.exports = function (id) {
     validate.string(id)
     validate.string.notVoid('id', id)
 
+    if (!ObjectId.isValid(id)) throw new ContentError(`wrong id: ${id} must be a string of 12 length`)
+    id = ObjectId(id)
+    
     const client = database()
 
     return client.connect()
         .then(connection => {
             const users = connection.db().collection('users')
-            try {
-                id = ObjectId(id)
-            }
-            catch {
-                throw new ContentError(`wrong id: ${id} must be a string of 12 length`)
-            }
+            
             return users.findOne({ _id: id })
                 .then(user => {
                     if (!user) throw new NotFoundError(`user with id ${id.id} not found`)

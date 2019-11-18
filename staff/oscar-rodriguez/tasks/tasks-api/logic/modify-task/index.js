@@ -6,9 +6,15 @@ const { ObjectId } = database
 module.exports = function (id, taskId, title, description, status) {
     validate.string(id)
     validate.string.notVoid('id', id)
+
+    if (!ObjectId.isValid(id)) throw new ContentError(`wrong id: ${id} must be a string of 12 length`)
+    id = ObjectId(id)
     
     validate.string(taskId)
     validate.string.notVoid('taskId', taskId)
+    
+    if (!ObjectId.isValid(taskId)) throw new ContentError(`wrong taskId: ${taskId} must be a string of 12 length`)
+    taskId = ObjectId(taskId)
     
     if (title) {
         validate.string(title)
@@ -30,18 +36,6 @@ module.exports = function (id, taskId, title, description, status) {
             const users = connection.db().collection('users')
             const tasks = connection.db().collection('tasks')
             
-            try {
-                id = ObjectId(id)
-            }
-            catch {
-                throw new ContentError(`wrong id: ${id} must be a string of 12 length`)
-            }
-            try {
-                taskId = ObjectId(taskId)
-            }
-            catch {
-                throw new ContentError(`wrong taskId: ${taskId} must be a string of 12 length`)
-            }
             
             return users.findOne({_id: id})
                 .then (user => {

@@ -58,19 +58,9 @@ describe('logic - retrieve user', () => {
             })
     })
 
-    it("should fail on a invalid id", () => {
-        const id = 'wrong'
-
-        return retrieveUser(id)
-            .then(() => {
-                throw Error('should not reach this point')
-            })
-            .catch(error => {
-                expect(error).to.exist
-                expect(error).to.be.an.instanceOf(ContentError)
-                expect(error.message).to.equal(`wrong id: ${id} must be a string of 12 length`)
-            })
-    })
+    it("should fail on invalid id", () =>
+        expect (() => retrieveUser('wrong').to.throw(ContentError, `wrong id: wrong must be a string of 12 length`))
+    )
 
     it('should fail on incorrect type and content', () => {
         expect(() => retrieveUser(1)).to.throw(TypeError, '1 is not a string')

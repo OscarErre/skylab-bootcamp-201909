@@ -255,6 +255,14 @@ describe('logic - modify task', () => {
         })
     })
 
+    it("should fail on invalid id", () =>
+        expect (() => modifyTask('wrong', taskId, newTitle, newDescription, newStatus).to.throw(ContentError, `wrong id: wrong must be a string of 12 length`))
+    )
+
+    it("should fail on invalid taskId", () =>
+        expect (() => modifyTask(id, 'wrong', newTitle, newDescription, newStatus).to.throw(ContentError, `wrong taskId: wrong must be a string of 12 length`))
+    )
+
     it('should fail on unexisting user and correct task data', () => {
         const id = 'wrong1234567'
         const taskId = taskIds.random()

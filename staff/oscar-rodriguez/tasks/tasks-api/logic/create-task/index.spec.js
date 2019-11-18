@@ -73,7 +73,7 @@ describe('logic - create task', () => {
             })
     )
 
-    it.oy("should fail on invalid id", () =>
+    it("should fail on invalid id", () =>
         createTask('wrong', title, description)
             .then(() => {
                 throw Error('should not reach this point')

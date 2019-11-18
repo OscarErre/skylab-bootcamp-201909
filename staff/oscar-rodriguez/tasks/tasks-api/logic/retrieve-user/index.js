@@ -24,11 +24,13 @@ module.exports = function (id) {
 
                     const { _id } = user
 
-                    return users.updateOne({ _id }, { $set: { lastAccess: new Date } })
+                    user.lastAccess = new Date
+
+                    return users.updateOne({ _id }, { $set: { lastAccess: user.lastAccess } })
                         .then(result => {
                             if (!result.modifiedCount) throw Error('could not update user')
-                            const { _id, name, surname, username, email } = user
-                            return ({ id: _id.toString(), name, surname, username, email })
+                            const { _id, name, surname, username, email, lastAccess} = user
+                            return ({ id: _id.toString(), name, surname, username, email, lastAccess})
                         })
                 })
         })

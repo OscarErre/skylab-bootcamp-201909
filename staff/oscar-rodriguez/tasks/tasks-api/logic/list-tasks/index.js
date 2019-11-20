@@ -11,21 +11,18 @@ module.exports = function (id) {
 
     return User.findById(id)
         .then(user => {
-            if (!user) throw new NotFoundError(`user with id ${id.id.toString()} not found`)
+            if (!user) throw new NotFoundError(`user not found`)
 
-            const access = new Date
-            return Task.updateMany ({user: user.id}, { $set: { lastAccess : access}})
-                        .then (() => Task.find({ user: user.id }).lean()
-                                        .then(results => {
-                                                
-                                            results.forEach(task => {
-                                                task.id = task._id.toString()
-                                                delete task._id
-                                                task.user = user.id
-                                            })
-                                            return results
-                                        })
-                        )
+            return Task.updateMany({ user: id }, { $set: { lastAccess: new Date } })
+        })
+        .then(() => Task.find({ user: id }).lean())
+        .then(tasks => {
+            tasks.forEach(task => {
+                task.id = task._id.toString()
+                task.user = task.user.toString()
+                delete task._id
+            })
 
+            return tasks
         })
 }

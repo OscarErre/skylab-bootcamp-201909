@@ -1,7 +1,7 @@
 const validate = require('../../utils/validate')
 const { NotFoundError, ContentError } = require('../../utils/errors')
-const database = require('../../utils/database')
-const { ObjectId } = database
+const {ObjectId , models: {User, Task}} = require('../../data')
+
 
 module.exports = function (id, taskId, title, description, status) {
     validate.string(id)
@@ -29,42 +29,20 @@ module.exports = function (id, taskId, title, description, status) {
         validate.string.notVoid('status', status)
         validate.matches('status', status, 'TODO', 'DOING', 'REVIEW', 'DONE')
     }
-
-    const client = database()
-    return client.connect()
-        .then (connection => {
-            const users = connection.db().collection('users')
-            const tasks = connection.db().collection('tasks')
             
-            
-            return users.findOne({_id: id})
-                .then (user => {
-                    if (!user) throw new NotFoundError(`user with id ${id.id.toString()} not found`)
-            
-                    return  tasks.findOne({_id: taskId, user: id.toString()})
-                        .then (task => {
-                            if (!task) throw new NotFoundError(`user does not have task with id ${taskId.id.toString()}`)
-                                        
-                            title && (task.title = title)
-                            description && (task.description = description)
-                            status && (task.status = status)
-                            task.lastAccess = new Date
+    (async function () {
+    
+        const user = await User.findById({ id })
+        if (!user) throw new NotFoundError(`user with id ${id.id.toString()} not found`)
+        
+        const task = await Task.findOne({ _id: taskId, user: id.toString()})
+        if (!task) throw new NotFoundError(`user does not have task with id ${taskId.id.toString()}`)
                     
-                            return tasks.updateOne({_id : task._id}, { $set: {
-                                        title: task.title,
-                                        description: task.description,
-                                        status: task.status,
-                                        lastAccess: task.lastAccess
-                            }})
-                            .then(result => {
-                                if (!result.modifiedCount) throw Error('could not update user')
-                            })
+        title && (task.title = title)
+        description && (task.description = description)
+        status && (task.status = status)
+        task.lastAccess = new Date
 
-                        })
-
-
-
-                })
-
-    })
+        await Task.save()
+    })()        
 }

@@ -21,7 +21,7 @@ module.exports = function (id, title, description) {
             if (!res) throw new NotFoundError(`user with id ${id.id.toString()} not found`)
 
             const task = {
-                user: id.toString(),
+                user: id,
                 title,
                 description,
                 status: 'TODO',

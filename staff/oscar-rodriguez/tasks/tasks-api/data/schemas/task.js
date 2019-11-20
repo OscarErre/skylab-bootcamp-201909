@@ -25,7 +25,7 @@ module.exports = new Schema ({
         type: Date
     },
 
-    lastAcces: {
+    lastAccess: {
         type: Date,
     }
 })

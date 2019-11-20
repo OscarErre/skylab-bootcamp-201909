@@ -3,117 +3,94 @@ const { env: { DB_URL_TEST } } = process
 const { expect } = require('chai')
 const modifyTask = require('.')
 const { random } = Math
-const uuid = require('uuid')
 require('../../utils/array-random')
-const { NotFoundError, ConflictError, ContentError } = require('../../utils/errors')
-const database = require('../../utils/database')
-const { ObjectId } = database
+const { NotFoundError, ContentError } = require('../../utils/errors')
+const {database , ObjectId, models: {User, Task}} = require('../../data')
 
 
-describe('logic - modify task', () => {
+describe.only('logic - modify task', () => {
 
-    let client, users, tasks
-    before(() => {
-        client = database(DB_URL_TEST)
-
-        return client.connect()
-            .then(connection => {
-                const db = connection.db()
-
-                tasks = db.collection('tasks')
-                users = db.collection('users')
-            })
-    })
+    before(() => database.connect(DB_URL_TEST))
 
     const statuses = ['TODO', 'DOING', 'REVIEW', 'DONE']
     let id, name, surname, email, username, password, taskIds, titles, descriptions, docs
 
-    beforeEach(() => {
+    beforeEach(async () => {
         name = `name-${random()}`
         surname = `surname-${random()}`
         email = `email-${random()}@mail.com`
         username = `username-${random()}`
         password = `password-${random()}`
 
-        return users.insertOne({ name, surname, email, username, password })
-            .then(result => {
-                id = result.insertedId.toString()
+        const user = await User.create({ name, surname, email, username, password })
+        id = user.id
 
-                docs = []
-                titles = []
-                descriptions = []
+        docs = []
+        titles = []
+        descriptions = []
 
-                for (let i = 0; i < 5; i++) {
-                    docs.push({
-                        user: id,
-                        title: `title-${random()}`,
-                        description: `description-${random()}`,
-                        status: statuses.random(),
-                        date: new Date
-                    })
-                    titles.push(docs[i].title)
-                    descriptions.push(docs[i].description)
-                }
-
-                for (let i = 0; i < 5; i++)
-                    docs.push({
-                        user: uuid(),
-                        title: `title-${random()}`,
-                        description: `description-${random()}`,
-                        status: statuses.random(),
-                        date: new Date
-                    })
-
-                return tasks.insertMany(docs)
-                    .then(result => {
-                        taskIds = []
-                        result.ops.forEach(task => {
-                            if (task.user === id) taskIds.push(task._id.toString())
-                        })
-                        //taskIds = result.insertedIds
-                        // no devuelve un Array
-                    })
+        for (let i = 0; i < 5; i++) {
+            docs.push({
+                user: id,
+                title: `title-${random()}`,
+                description: `description-${random()}`,
+                status: statuses.random(),
+                date: new Date
             })
+            titles.push(docs[i].title)
+            descriptions.push(docs[i].description)
+        }
+
+        for (let i = 0; i < 5; i++)
+            docs.push({
+                user: ObjectId(),
+                title: `title-${random()}`,
+                description: `description-${random()}`,
+                status: statuses.random(),
+                date: new Date
+            })
+
+        taskIds = []
+        const tasks = await Task.insertMany(docs)
+        tasks.forEach(task => {
+            if (task.user.toString() === id) taskIds.push(task._id.toString())
+        })
     })
 
-    it('should succeed on correct user and task data', () => {
+    it.only('should succeed on correct user and task data', async () => {
         const taskId = taskIds.random()
         const newTitle = `new-title-${random()}`
         const newDescription = `new-description-${random()}`
         const newStatus = statuses.random()
         const testStart = new Date
 
-        return modifyTask(id, taskId, newTitle, newDescription, newStatus)
-            .then(response => {
-                expect(response).to.not.exist
+        await modifyTask(id, taskId, newTitle, newDescription, newStatus)
+        
+        const task = await Task.findOne({ _id: ObjectId(taskId) })
 
-                return tasks.findOne({ _id: ObjectId(taskId) })
-                    .then(task => {
-                        expect(task.user).to.equal(id)
+        expect(task.user.toString()).to.equal(id)
 
-                        expect(task.title).to.exist
-                        expect(task.title).to.be.a('string')
-                        expect(task.title).to.have.length.greaterThan(0)
-                        expect(task.title).to.equal(newTitle)
+        expect(task.title).to.exist
+        expect(task.title).to.be.a('string')
+        expect(task.title).to.have.length.greaterThan(0)
+        expect(task.title).to.equal(newTitle)
 
-                        expect(task.description).to.exist
-                        expect(task.description).to.be.a('string')
-                        expect(task.description).to.have.length.greaterThan(0)
-                        expect(task.description).to.equal(newDescription)
+        expect(task.description).to.exist
+        expect(task.description).to.be.a('string')
+        expect(task.description).to.have.length.greaterThan(0)
+        expect(task.description).to.equal(newDescription)
 
-                        expect(task.status).to.exist
-                        expect(task.status).to.be.a('string')
-                        expect(task.status).to.have.length.greaterThan(0)
-                        expect(task.status).to.equal(newStatus)
+        expect(task.status).to.exist
+        expect(task.status).to.be.a('string')
+        expect(task.status).to.have.length.greaterThan(0)
+        expect(task.status).to.equal(newStatus)
 
-                        expect(task.date).to.exist
-                        expect(task.date).to.be.an.instanceOf(Date)
+        expect(task.date).to.exist
+        expect(task.date).to.be.an.instanceOf(Date)
 
-                        expect(task.lastAccess).to.exist
-                        expect(task.lastAccess).to.be.an.instanceOf(Date)
-                        expect(task.lastAccess).to.be.greaterThan(testStart)
-                    })
-            })
+        expect(task.lastAccess).to.exist
+        expect(task.lastAccess).to.be.an.instanceOf(Date)
+        expect(task.lastAccess).to.be.greaterThan(testStart)
     })
 
     it('should succeed on correct user and new task data, except for title', () => {
@@ -345,5 +322,5 @@ describe('logic - modify task', () => {
         expect(() => modifyTask(id, taskId, title, description, {})).to.throw(TypeError, '[object Object] is not a string')
     })
 
-    after(() => client.close())
+    after(() => database.disconnect())
 })

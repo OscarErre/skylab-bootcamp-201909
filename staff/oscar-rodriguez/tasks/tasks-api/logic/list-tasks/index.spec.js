@@ -6,7 +6,7 @@ const { random } = Math
 const {database, ObjectId, models: { User, Task}} = require('../../data')
 const { ContentError, NotFoundError } = require ('../../utils/errors')
 
-describe.only('logic - list tasks', () => {
+describe('logic - list tasks', () => {
 
     before(() => database.connect(DB_URL_TEST))
 
@@ -21,7 +21,7 @@ describe.only('logic - list tasks', () => {
 
         return Promise.all([User.deleteMany(), Task.deleteMany()])
             .then (()=>User.create({ name, surname, email, username, password }))
-            .then (user=> id=user.id)
+            .then (user=> id=user._id)
             .then(() => {
 
                 docs = []
@@ -63,7 +63,7 @@ describe.only('logic - list tasks', () => {
     })
 
     it('should succeed on correct user', () =>
-        listTasks(id)
+        listTasks(id.toString())
             .then(tasks => {
                 expect(tasks).to.exist
                 expect(tasks).to.have.lengthOf(5)
@@ -74,7 +74,7 @@ describe.only('logic - list tasks', () => {
                     expect(task.id).to.have.length.greaterThan(0)
                     expect(task.id).be.oneOf(taskIds)
 
-                    expect(task.user).to.equal(id)
+                    expect(task.user).to.equal(id.toString())
 
                     expect(task.title).to.exist
                     expect(task.title).to.be.a('string')
@@ -102,7 +102,7 @@ describe.only('logic - list tasks', () => {
             .catch(error => {
                 expect(error).to.exist
                 expect(error).to.be.an.instanceOf(NotFoundError)
-                expect(error.message).to.equal(`user with id ${id} not found`)
+                expect(error.message).to.equal(`user not found`)
             })
     })
 

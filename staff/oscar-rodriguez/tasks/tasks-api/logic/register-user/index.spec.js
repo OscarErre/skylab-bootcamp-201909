@@ -4,17 +4,11 @@ const { expect } = require('chai')
 const registerUser = require('.')
 const { ContentError } = require('../../utils/errors')
 const { random } = Math
-const database = require('../../utils/database')
+const {database, models: {User}} = require('../../data')
 
 describe('logic - register user', () => {
-    let client, users
-
-    before(() => {
-        client = database(DB_URL_TEST)
-
-        return client.connect()
-            .then(connection => users = connection.db().collection('users'))
-    })
+    
+    before(() => database.connect(DB_URL_TEST))
 
     let name, surname, email, username, password
 
@@ -24,6 +18,8 @@ describe('logic - register user', () => {
         email = `email-${random()}@mail.com`
         username = `username-${random()}`
         password = `password-${random()}`
+
+        return User.deleteMany()
     })
 
     it('should succeed on correct credentials', () =>
@@ -31,7 +27,7 @@ describe('logic - register user', () => {
             .then(response => {
                 expect(response).to.be.undefined
 
-                return users.findOne({ username })
+                return User.findOne({ username })
             })
             .then(user => {
                 expect(user).to.exist
@@ -46,7 +42,7 @@ describe('logic - register user', () => {
 
     describe('when user already exists', () => {
         beforeEach(() =>
-            users.insertOne({ name, surname, email, username, password })
+            User.create({ name, surname, email, username, password })
         )
 
         it('should fail on already existing user', () =>
@@ -110,5 +106,5 @@ describe('logic - register user', () => {
         expect(() => registerUser(name, surname, email, username, ' \t\r')).to.throw(ContentError, 'password is empty or blank')
     })
 
-    after(() => client.close())
+    after(() => User.deleteMany().then(database.disconnect))
 })

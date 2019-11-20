@@ -3,18 +3,12 @@ const { env: { DB_URL_TEST } } = process
 const { expect } = require('chai')
 const { random } = Math
 const retrieveUser = require('.')
-const { NotFoundError, ContentError} = require('../../utils/errors')
-const database = require('../../utils/database')
+const { NotFoundError, ContentError } = require('../../utils/errors')
+const { database, models: { User } } = require('../../data')
 
 describe('logic - retrieve user', () => {
-    let client, users
-
-    before(() => {
-        client = database(DB_URL_TEST)
-
-        return client.connect()
-            .then(connection => users = connection.db().collection('users'))
-    })
+    
+    before(() => database.connect(DB_URL_TEST))
 
     let id, name, surname, email, username, password
 
@@ -25,10 +19,8 @@ describe('logic - retrieve user', () => {
         username = `username-${random()}`
         password = `password-${random()}`
 
-        return users.insertOne({ name, surname, email, username, password })
-            .then(result => {
-                id = result.insertedId.toString()
-            })
+        return User.create({ name, surname, email, username, password })
+            .then(user => id = user.id)
     })
 
     it('should succeed on correct user id', () =>
@@ -54,12 +46,12 @@ describe('logic - retrieve user', () => {
             .catch(error => {
                 expect(error).to.exist
                 expect(error).to.be.an.instanceOf(NotFoundError)
-                expect(error.message).to.equal(`user with id ${id} not found`)
+                expect(error.message).to.equal(`user not found`)
             })
     })
 
     it("should fail on invalid id", () =>
-        expect (() => retrieveUser('wrong').to.throw(ContentError, `wrong id: wrong must be a string of 12 length`))
+        expect(() => retrieveUser('wrong').to.throw(ContentError, `wrong id: wrong must be a string of 12 length`))
     )
 
     it('should fail on incorrect type and content', () => {
@@ -74,5 +66,5 @@ describe('logic - retrieve user', () => {
         expect(() => retrieveUser(' \t\r')).to.throw(ContentError, 'id is empty or blank')
     })
 
-    after (()=> client.close())
+    after(() => User.deleteMany().then(database.disconnect))
 })

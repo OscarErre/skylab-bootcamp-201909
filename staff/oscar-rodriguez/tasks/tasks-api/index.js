@@ -162,5 +162,6 @@ api.delete('/tasks/:taskId', tokenVerifier, (req, res) => {
 })
 
 database.connect(DB_URL)
-api.listen(PORT, () => console.log(`${name} ${version} up and running on port ${PORT}`))
+.then (() => api.listen(PORT, () => console.log(`${name} ${version} up and running on port ${PORT}`)) )
+
 

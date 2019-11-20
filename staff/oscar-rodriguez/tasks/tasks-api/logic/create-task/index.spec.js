@@ -7,7 +7,7 @@ const { database, models: { User, Task } } = require('../../data')
 const { ObjectId } = require ('mongodb')
 const { ContentError, NotFoundError } = require('../../utils/errors')
 
-describe.only('logic - create task', () => {
+describe('logic - create task', () => {
     
     before(() => database.connect(DB_URL_TEST))
 

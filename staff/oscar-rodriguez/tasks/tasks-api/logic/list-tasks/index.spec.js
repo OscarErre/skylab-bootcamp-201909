@@ -3,22 +3,12 @@ const { env: { DB_URL_TEST } } = process
 const { expect } = require('chai')
 const listTasks = require('.')
 const { random } = Math
-const uuid = require('uuid')
-const database = require('../../utils/database')
+const {database, ObjectId, models: { User, Task}} = require('../../data')
 const { ContentError, NotFoundError } = require ('../../utils/errors')
 
-describe('logic - list tasks', () => {
-    let client, users, tasks
+describe.only('logic - list tasks', () => {
 
-    before(() => {
-        client = database(DB_URL_TEST)
-
-        return client.connect()
-            .then(connection => {
-                users = connection.db().collection('users')
-                tasks = connection.db().collection('tasks')
-            })
-    })
+    before(() => database.connect(DB_URL_TEST))
 
     let id, name, surname, email, username, password, taskIds, titles, descriptions, docs
 
@@ -29,9 +19,10 @@ describe('logic - list tasks', () => {
         username = `username-${random()}`
         password = `password-${random()}`
 
-        return users.insertOne({ name, surname, email, username, password })
-            .then(result => {
-                id = result.insertedId.toString()
+        return Promise.all([User.deleteMany(), Task.deleteMany()])
+            .then (()=>User.create({ name, surname, email, username, password }))
+            .then (user=> id=user.id)
+            .then(() => {
 
                 docs = []
                 titles = []
@@ -49,21 +40,20 @@ describe('logic - list tasks', () => {
                     descriptions.push(docs[i].description)
                 }
 
-
                 for (let i = 0; i < 5; i++)
                     docs.push({
-                        user: uuid(),
+                        user: ObjectId(),
                         title: `title-${random()}`,
                         description: `description-${random()}`,
                         status: 'REVIEW',
                         date: new Date
                     })
-                return tasks.insertMany(docs)
+                return Task.insertMany(docs)
                     .then(result => {
                         taskIds = []
-                        result.ops.forEach(task => {
-                            taskIds.push(task._id.toString())
-                        })
+                        result.forEach(task =>
+                            taskIds.push(task.id)
+                        )
                         //taskIds = result.insertedIds
                         // no devuelve un Array
                     })
@@ -117,7 +107,7 @@ describe('logic - list tasks', () => {
     })
 
     it("should fail on invalid id", () =>
-        expect (() => createTask('wrong').to.throw(ContentError, `wrong id: wrong must be a string of 12 length`))
+        expect (() => listTasks('wrong').to.throw(ContentError, `wrong id: wrong must be a string of 12 length`))
     )
 
     it('should fail on incorrect type and content', () => {
@@ -132,6 +122,7 @@ describe('logic - list tasks', () => {
         expect(() => listTasks(' \t\r')).to.throw(ContentError, 'id is empty or blank')
     })
 
-    after(() => client.close())
+    after(() => Promise.all ([User.deleteMany(), Task.deleteMany()])
+    .               then ( database.disconnect))
 
 })

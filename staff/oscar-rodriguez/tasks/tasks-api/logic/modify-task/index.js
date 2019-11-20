@@ -30,9 +30,9 @@ module.exports = function (id, taskId, title, description, status) {
         validate.matches('status', status, 'TODO', 'DOING', 'REVIEW', 'DONE')
     }
             
-    (async function () {
+     return (async function () {
     
-        const user = await User.findById({ id })
+        const user = await User.findById( id )
         if (!user) throw new NotFoundError(`user with id ${id.id.toString()} not found`)
         
         const task = await Task.findOne({ _id: taskId, user: id.toString()})
@@ -43,6 +43,6 @@ module.exports = function (id, taskId, title, description, status) {
         status && (task.status = status)
         task.lastAccess = new Date
 
-        await Task.save()
+        await task.save()
     })()        
 }

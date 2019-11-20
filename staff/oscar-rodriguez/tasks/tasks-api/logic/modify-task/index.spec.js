@@ -22,6 +22,9 @@ describe.only('logic - modify task', () => {
         username = `username-${random()}`
         password = `password-${random()}`
 
+
+        await Promise.all ([User.deleteMany(), Task.deleteMany()])
+
         const user = await User.create({ name, surname, email, username, password })
         id = user.id
 
@@ -57,7 +60,7 @@ describe.only('logic - modify task', () => {
         })
     })
 
-    it.only('should succeed on correct user and task data', async () => {
+    it('should succeed on correct user and task data', async () => {
         const taskId = taskIds.random()
         const newTitle = `new-title-${random()}`
         const newDescription = `new-description-${random()}`
@@ -96,7 +99,7 @@ describe.only('logic - modify task', () => {
     it('should succeed on correct user and new task data, except for title', () => {
         const taskId = taskIds.random()
         let title
-        return tasks.findOne({_id: ObjectId(taskId)})
+        return Task.findOne({_id: ObjectId(taskId)})
         .then (task=>{
             title = task.title
         })
@@ -109,10 +112,10 @@ describe.only('logic - modify task', () => {
                     .then(response => {
                         expect(response).to.not.exist
         
-                        return tasks.findOne({_id: ObjectId(taskId)})
+                        return Task.findOne({_id: ObjectId(taskId)})
                             .then (task=>{
         
-                            expect(task.user).to.equal(id)
+                            expect(task.user.toString()).to.equal(id)
             
                             expect(task.title).to.exist
                             expect(task.title).to.be.a('string')
@@ -144,7 +147,7 @@ describe.only('logic - modify task', () => {
     it('should succeed on correct user and new task data, except for description', () => {
         const taskId = taskIds.random()
         let description
-        return tasks.findOne({_id: ObjectId(taskId)})
+        return Task.findOne({_id: ObjectId(taskId)})
         .then (task=>{
             description = task.description
         })
@@ -156,9 +159,9 @@ describe.only('logic - modify task', () => {
                 .then(response => {
                     expect(response).to.not.exist
 
-                    return tasks.findOne({_id: ObjectId(taskId)})
+                    return Task.findOne({_id: ObjectId(taskId)})
                         .then (task=>{
-                            expect(task.user).to.equal(id)
+                            expect(task.user.toString()).to.equal(id)
 
                             expect(task.title).to.exist
                             expect(task.title).to.be.a('string')
@@ -189,7 +192,7 @@ describe.only('logic - modify task', () => {
     it('should succeed on correct user and new task data, except for status', () => {
         const taskId = taskIds.random()
         let status
-        return tasks.findOne({_id: ObjectId(taskId)})
+        return Task.findOne({_id: ObjectId(taskId)})
         .then (task=>{
             status = task.status
         })
@@ -202,9 +205,9 @@ describe.only('logic - modify task', () => {
                 .then(response => {
                     expect(response).to.not.exist
 
-                    return tasks.findOne({_id: ObjectId(taskId)})
+                    return Task.findOne({_id: ObjectId(taskId)})
                         .then (task =>{
-                            expect(task.user).to.equal(id)
+                            expect(task.user.toString()).to.equal(id)
         
                             expect(task.title).to.exist
                             expect(task.title).to.be.a('string')

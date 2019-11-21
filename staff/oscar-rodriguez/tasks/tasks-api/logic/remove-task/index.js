@@ -1,39 +1,26 @@
-const validate = require('../../utils/validate')
-const { NotFoundError, ContentError } = require('../../utils/errors')
-const database = require('../../utils/database')
-const { ObjectId } = database
+const { validate, errors: { NotFoundError, ConflictError, ContentError } } = require('tasks-util')
+const { ObjectId, models: { User, Task } } = require('tasks-data')
 
 module.exports = function (id, taskId) {
     validate.string(id)
     validate.string.notVoid('id', id)
+    if (!ObjectId.isValid(id)) throw new ContentError(`${id} is not a valid id`)
 
-    if (!ObjectId.isValid(id)) throw new ContentError(`wrong id: ${id} must be a string of 12 length`)
-    id = ObjectId(id)
-    
     validate.string(taskId)
-    validate.string.notVoid('taskId', taskId)
-    
-    if (!ObjectId.isValid(taskId)) throw new ContentError(`wrong taskId: ${taskId} must be a string of 12 length`)
-    taskId = ObjectId(taskId)
-    const client = database()
+    validate.string.notVoid('task id', taskId)
+    if (!ObjectId.isValid(taskId)) throw new ContentError(`${taskId} is not a valid task id`)
 
-    return client.connect()
-        .then(connection => {
+    return (async () => {
+        const user = await User.findById(id)
 
-            const users = connection.db().collection('users')
+        if (!user) throw new NotFoundError(`user with id ${id} not found`)
 
-            return users.findOne({ _id: id })
-                .then(user => {
-                    if (!user) throw new NotFoundError(`user with id ${id.id.toString()} not found`)
+        const task = await Task.findById(taskId)
 
-                    const tasks = connection.db().collection('tasks')
+        if (!task) throw new NotFoundError(`user does not have task with id ${taskId}`)
 
-                    return tasks.deleteOne({ _id: taskId , user: id.toString()})
-                        .then(result => {
-                            if (!result.deletedCount) throw new NotFoundError(`task with id ${taskId.id.toString()} does not matcht to this user`)
-                        })
+        if (task.user.toString() !== id.toString()) throw new ConflictError(`user with id ${id} does not correspond to task with id ${taskId}`)
 
-            })
-    })
-
+        await Task.deleteOne({ _id: ObjectId(taskId) })
+    })()
 }

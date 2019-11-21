@@ -1,28 +1,22 @@
-const validate = require('../../utils/validate')
-const { NotFoundError, ContentError } = require('../../utils/errors')
-const { models: { User } } = require('../../data')
-const { ObjectId } = require('mongodb')
+const { validate, errors: { NotFoundError, ContentError } } = require('tasks-util')
+const { ObjectId, models: { User } } = require('tasks-data')
 
 module.exports = function (id) {
     validate.string(id)
     validate.string.notVoid('id', id)
+    if (!ObjectId.isValid(id)) throw new ContentError(`${id} is not a valid id`)
 
-    if (!ObjectId.isValid(id)) throw new ContentError(`wrong id: ${id} must be a string of 12 length`)
-    id = ObjectId(id)
+    return (async () => {
+        const user = await User.findById(id)
 
+        if (!user) throw new NotFoundError(`user with id ${id} not found`)
 
-    return User.findOne({ _id: id })
-        .then(user => {
-            if (!user) throw new NotFoundError(`user not found`)
+        user.lastAccess = new Date
 
-            const { id } = user
+        await user.save()
 
-            user.lastAccess = new Date
+        const { name, surname, email, username } = user.toObject()
 
-            return user.save()
-                .then(()=> {
-                    const { name, surname, username, email, lastAccess } = user
-                    return ({ id, name, surname, username, email, lastAccess })
-                })
-        })
+        return { id, name, surname, email, username }
+    })()
 }

@@ -1,7 +1,5 @@
-const validate = require('../../utils/validate')
-const uuid = require('uuid/v4')
-const { ConflictError } = require('../../utils/errors')
-const { models: { User } } = require('../../data')
+const { validate, errors: { ConflictError } } = require('tasks-util')
+const { models: { User } } = require('tasks-data')
 
 module.exports = function (name, surname, email, username, password) {
     validate.string(name)
@@ -16,13 +14,11 @@ module.exports = function (name, surname, email, username, password) {
     validate.string(password)
     validate.string.notVoid('password', password)
 
+    return (async () => {
+        const user = await User.findOne({ username })
 
-    return User.findOne({ username })
-        .then(user => {
-            if (user) throw new ConflictError(`user with username ${username} already exists`)
+        if (user) throw new ConflictError(`user with username ${username} already exists`)
 
-            return User.create({ name, surname, email, username, password })
-        })
-        .then(() => { })
-
+        await User.create({ name, surname, email, username, password })
+    })()
 }

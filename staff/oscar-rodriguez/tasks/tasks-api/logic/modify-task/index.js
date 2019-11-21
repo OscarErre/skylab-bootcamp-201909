@@ -1,21 +1,15 @@
-const validate = require('../../utils/validate')
-const { NotFoundError, ContentError } = require('../../utils/errors')
-const {ObjectId , models: {User, Task}} = require('../../data')
-
+const { validate, errors: { ConflictError, NotFoundError } } = require('tasks-util')
+const { ObjectId, models: { User, Task } } = require('tasks-data')
 
 module.exports = function (id, taskId, title, description, status) {
     validate.string(id)
     validate.string.notVoid('id', id)
+    if (!ObjectId.isValid(id)) throw new ContentError(`${id} is not a valid id`)
 
-    if (!ObjectId.isValid(id)) throw new ContentError(`wrong id: ${id} must be a string of 12 length`)
-    id = ObjectId(id)
-    
     validate.string(taskId)
-    validate.string.notVoid('taskId', taskId)
-    
-    if (!ObjectId.isValid(taskId)) throw new ContentError(`wrong taskId: ${taskId} must be a string of 12 length`)
-    taskId = ObjectId(taskId)
-    
+    validate.string.notVoid('task id', taskId)
+    if (!ObjectId.isValid(taskId)) throw new ContentError(`${taskId} is not a valid task id`)
+
     if (title) {
         validate.string(title)
         validate.string.notVoid('title', title)
@@ -29,20 +23,25 @@ module.exports = function (id, taskId, title, description, status) {
         validate.string.notVoid('status', status)
         validate.matches('status', status, 'TODO', 'DOING', 'REVIEW', 'DONE')
     }
-            
-     return (async function () {
-    
-        const user = await User.findById( id )
-        if (!user) throw new NotFoundError(`user with id ${id.id.toString()} not found`)
-        
-        const task = await Task.findOne({ _id: taskId, user: id.toString()})
-        if (!task) throw new NotFoundError(`user does not have task with id ${taskId.id.toString()}`)
-                    
-        title && (task.title = title)
-        description && (task.description = description)
-        status && (task.status = status)
-        task.lastAccess = new Date
 
-        await task.save()
-    })()        
+    return (async () => {
+        const user = await User.findById(id)
+
+        if (!user) throw new NotFoundError(`user with id ${id} not found`)
+
+        const task = await Task.findById(taskId)
+
+        if (!task) throw new NotFoundError(`user does not have task with id ${taskId}`)
+
+        if (task.user.toString() !== id.toString()) throw new ConflictError(`user with id ${id} does not correspond to task with id ${taskId}`)
+
+        const update = {}
+
+        title && (update.title = title)
+        description && (update.description = description)
+        status && (update.status = status)
+        update.lastAccess = new Date
+
+        await Task.updateOne({ _id: ObjectId(taskId) }, { $set: update })
+    })()
 }

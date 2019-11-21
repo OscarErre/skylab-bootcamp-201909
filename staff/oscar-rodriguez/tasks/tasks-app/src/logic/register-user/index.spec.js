@@ -1,4 +1,3 @@
-//require('dotenv').config()
 const { env: { REACT_APP_DB_URL_TEST: DB_URL_TEST } } = process
 const registerUser = require('.')
 const { random } = Math

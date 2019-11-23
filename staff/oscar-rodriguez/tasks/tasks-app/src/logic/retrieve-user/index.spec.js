@@ -1,6 +1,4 @@
-require('dotenv').config()
-const { env: { DB_URL_TEST } } = process
-const { expect } = require('chai')
+const { env: { REACT_APP_DB_URL_TEST : DB_URL_TEST, REACT_APP_TEST_SECRET: SECRET } } = process
 const { random } = Math
 const retrieveUser = require('.')
 const { errors: { NotFoundError } } = require('tasks-util')
@@ -8,7 +6,7 @@ const { database, models: { User } } = require('tasks-data')
 const jwt = require('jsonwebtoken')
 
 describe('logic - retrieve user', () => {
-    before(() => database.connect(DB_URL_TEST))
+    beforeAll(() => database.connect(DB_URL_TEST))
 
     let id, token, name, surname, email, username, password
 
@@ -24,35 +22,36 @@ describe('logic - retrieve user', () => {
         const user = await User.create({ name, surname, email, username, password })
 
         id = user.id
-        token = jwt.sign({ sub: id }, SECRET, { expiresIn: '1d' })
+        token = jwt.sign({ sub: id }, SECRET)
     })
 
     it('should succeed on correct user id', async () => {
-        const user = await retrieveUser(id, token)
+        const user = await retrieveUser(token)
 
-        expect(user).to.exist
-        expect(user.id).to.equal(id)
-        expect(user._id).to.not.exist
-        expect(user.name).to.equal(name)
-        expect(user.surname).to.equal(surname)
-        expect(user.email).to.equal(email)
-        expect(user.username).to.equal(username)
-        expect(user.password).to.be.undefined
+        expect(user).toBeDefined()
+        expect(user.id).toBe(id)
+        expect(user._id).toBeUndefined()
+        expect(user.name).toBe(name)
+        expect(user.surname).toBe(surname)
+        expect(user.email).toBe(email)
+        expect(user.username).toBe(username)
+        expect(user.password).toBeUndefined()
     })
 
     it('should fail on wrong user id', async () => {
         const id = '012345678901234567890123'
+        token =jwt.sign({ sub: id }, SECRET)
 
         try {
-            await retrieveUser(id)
+            await retrieveUser(token)
 
             throw Error('should not reach this point')
         } catch (error) {
-            expect(error).to.exist
-            expect(error).to.be.an.instanceOf(NotFoundError)
-            expect(error.message).to.equal(`user with id ${id} not found`)
+            expect(error).toBeDefined()
+            expect(error).toBeInstanceOf(NotFoundError)
+            expect(error.message).toBe(`user with id ${id} not found`)
         }
     })
 
-    after(() => User.deleteMany().then(database.disconnect))
+    afterAll(() => User.deleteMany().then(database.disconnect))
 })

@@ -1,0 +1,347 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  font-family: "Rajdhani";
+}
+
+.upper-menu {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 50vw;
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: nowrap;
+  background: linear-gradient(to right, #740449, #040957);
+  border: 1px solid whitesmoke;
+  box-shadow: 3px 3px 3px;
+  color: whitesmoke;
+}
+.upper-menu__container {
+  display: flex;
+  justify-content: center;
+  flex-wrap: nowrap;
+  flex-grow: 1;
+}
+.upper-menu__item {
+  margin: 0 5%;
+}
+
+.slide-row {
+  height: 100%;
+  width: 10%;
+  padding: 1%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.slide-detail {
+  height: 90%;
+  width: 80%;
+  margin: 1%;
+  background: tomato;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.user-game-menu {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  background: silver;
+  color: whitsmoke;
+  grid-column: span 9;
+}
+
+.landing {
+  width: 100vw;
+  height: 100vh;
+  background-image: url("img/background.jpg");
+  background-repeat: no-repeat;
+  background-size: cover;
+  color: whitesmoke;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+.landing__title {
+  font-family: Righteous;
+  font-size: 6vw;
+}
+.landing__text {
+  font-size: 3vw;
+}
+
+.login {
+  color: whitesmoke;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+.login__form {
+  margin: 2vw;
+  padding: 3vw;
+  font-family: "Londrina Outline";
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+.login__form input {
+  margin: 2%;
+}
+.login__form button {
+  align-self: center;
+  justify-self: center;
+  margin: 2%;
+}
+
+.register {
+  width: 100vw;
+  height: 100vh;
+  background-image: url("img/background.jpg");
+  background-repeat: no-repeat;
+  background-size: cover;
+  color: whitesmoke;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+}
+.register__title {
+  width: 100%;
+  max-height: 30%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.register__what-is {
+  min-height: 70%;
+  width: 50%;
+}
+.register__form {
+  width: 40%;
+  border: 1px solid whitesmoke;
+  border-radius: 0.5vw;
+  margin: 2vw;
+  padding: 3vw;
+  font-family: Calibri;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-end;
+}
+.register__form label {
+  margin: 2%;
+}
+.register__form button {
+  background: whitesmoke;
+  color: black;
+  align-self: center;
+  justify-self: center;
+  margin: 2%;
+}
+
+.what-is {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+.what-is__text {
+  margin: 2% 0 2% 0;
+}
+
+.home {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  background-image: url("img/background.jpg");
+  background-repeat: no-repeat;
+  background-size: cover;
+  color: whitesmoke;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+}
+.home__option {
+  min-width: 20vw;
+  min-height: 50vh;
+  border: 1px solid whitesmoke;
+  border-radius: 2%;
+  margin: 0 3% 0 3%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+}
+.home__option:hover {
+  background: #ffffff94;
+}
+.home__option--small {
+  min-height: 5vh;
+  margin: 2% 0;
+}
+.home__side {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  align-items: center;
+}
+
+.home-footer {
+  position: absolute;
+  bottom: 0;
+  width: 100vw;
+  display: flex;
+  justify-content: space-evenly;
+}
+.home-footer__item {
+  margin: 0 3% 0 3%;
+  cursor: pointer;
+}
+.home-footer__item:hover {
+  color: yellow;
+}
+
+.game-panel {
+  width: 100vw;
+  height: 100vh;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 10vw;
+  grid-template-rows: 1fr 1fr 1fr 1fr 5vh;
+  grid-gap: 1%;
+}
+
+.cards-zone {
+  display: flex;
+  justify-content: space-around;
+  grid-column: span 8;
+  align-items: center;
+  border: 1px solid black;
+}
+
+.game-zone {
+  grid-column: span 4;
+  grid-row: span 2;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: silver;
+}
+
+.temp-zone {
+  grid-column: 6/span 2;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: silver;
+}
+
+.card {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: tomato;
+  border: 1px solid red;
+  width: 10vw;
+  height: 25vh;
+}
+.card--oponent {
+  background: skyblue;
+  border: 1px solid blue;
+}
+
+.life {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  grid-column: 9;
+}
+
+.select-hand {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  flex-wrap: wrap;
+}
+.select-hand__title {
+  width: 100%;
+  padding: 0 5%;
+  display: flex;
+  align-items: center;
+}
+.select-hand__card-detail {
+  width: 50%;
+  height: 85%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.select-hand__selected {
+  width: 50%;
+  height: 85%;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  grid-template-rows: 50% 50%;
+  grid-gap: 1%;
+  justify-items: center;
+  align-items: center;
+}
+
+.your-cards {
+  position: relative;
+  height: 100vh;
+  width: 100vw;
+}
+.your-cards__title {
+  padding: 0 15%;
+  display: flex;
+  align-items: center;
+  height: 15%;
+}
+.your-cards__card-detail {
+  display: flex;
+  height: 85%;
+  justify-content: center;
+  align-items: center;
+}
+
+.new-cards {
+  position: relative;
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.new-cards__title {
+  padding: 0 5%;
+  width: 100%;
+  display: flex;
+  align-items: center;
+}
+.new-cards__random {
+  display: flex;
+  height: 80%;
+  width: 90%;
+  justify-content: center;
+  align-items: center;
+}
+
+.random__card {
+  height: 85%;
+  width: 25%;
+  margin: 1%;
+  background: tomato;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/*# sourceMappingURL=index.css.map */

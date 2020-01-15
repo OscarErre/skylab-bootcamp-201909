@@ -1,0 +1,47 @@
+.game-panel
+    width: 100vw
+    height: 100vh
+    display: grid
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 10vw
+    grid-template-rows: 1fr 1fr 1fr 1fr 5vh
+    grid-gap: 1%
+
+.cards-zone
+    display: flex
+    justify-content: space-around
+    grid-column: span 8
+    align-items: center
+    border: 1px solid black
+
+.game-zone
+    grid-column: span 4
+    grid-row: span 2
+    display: flex
+    justify-content: center
+    align-items: center
+    background: silver
+
+.temp-zone
+    grid-column: 6 / span 2 
+    display: flex
+    justify-content: center
+    align-items: center
+    background: silver
+
+.card
+    display: flex
+    justify-content: center
+    align-items: center
+    background: tomato
+    border: 1px solid red
+    width: 10vw
+    height: 25vh
+
+    &--oponent
+        background: skyblue
+        border: 1px solid blue
+.life
+    display: flex
+    justify-content: center
+    align-items: center
+    grid-column: 9

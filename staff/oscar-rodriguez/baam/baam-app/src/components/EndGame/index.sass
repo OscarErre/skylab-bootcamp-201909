@@ -1,0 +1,61 @@
+.end-game
+    width: 100vw
+    height: 100vh
+    position: absolute
+    top: 0
+    left: 0
+    display: flex
+    flex-direction: column
+    justify-content: center
+    align-items: center
+    z-index: 1000
+    &__back
+        width: 100%
+        height: 100%
+        position: absolute
+        top: 0
+        left: 0
+        background-color: #00000050
+    &__title
+        height: 20%
+        display: flex
+        justify-content: center
+        align-items: flex-end
+        font-family: 'VT323', monospace
+        font-size: 10vh
+        color: white
+        z-index: 2000
+    &__message
+        width: 100%
+        height: 75%
+        display: flex
+        justify-content: center
+        align-items: center
+        font-family: 'VT323', monospace
+        overflow: scroll
+        z-index: 2000
+    &__image
+        cursor: pointer
+        animation-name: resize
+        animation-iteration-count: 1
+        animation-timing-function: linear
+        animation-duration: 1s
+        height: 80%
+        &:hover
+            filter: brightness(1.1)
+            height: 85%
+
+@keyframes resize
+    0%
+        height: 5%
+        transform: rotate(5deg)
+    33%
+        height: 35%
+        transform: rotate(-8deg)
+    66%
+        height: 66%
+        transform: rotate(6deg)
+    100%
+        height: 80%
+        transform: rotate(-3deg)
+

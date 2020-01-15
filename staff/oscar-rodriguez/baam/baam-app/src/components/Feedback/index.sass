@@ -1,0 +1,53 @@
+.feedback
+    width: 100vw
+    height: 100vh
+    position: absolute
+    top: 0
+    left: 0
+    display: flex
+    justify-content: center
+    align-items: center
+    z-index: 1000
+    &__back
+        width: 100%
+        height: 100%
+        position: absolute
+        top: 0
+        left: 0
+        background-color: #00000050
+    &__container
+        position: relative
+        display: flex
+        flex-direction: column
+        justify-content: center
+        align-items: center
+        background: whitesmoke
+        border-radius: 5px
+        box-shadow: 10px 10px 10px black
+        width: 40%
+        height: 25%
+        color: #2f2f2f
+        z-index: 1001
+    &__close
+        position: absolute
+        top: 5%
+        right: 5%
+        font-size: 3vh
+        cursor: pointer
+        &:hover
+            color: grey
+    &__title
+        height: 40%
+        display: flex
+        justify-content: center
+        align-items: center
+        font-family: 'VT323', monospace
+    &__message
+        height: 60%
+        width: 90%
+        margin: 2% 0
+        display: flex
+        justify-content: center
+        font-family: 'VT323', monospace
+        overflow: scroll
+

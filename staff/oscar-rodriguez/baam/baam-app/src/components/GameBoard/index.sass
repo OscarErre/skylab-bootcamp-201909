@@ -1,0 +1,97 @@
+.game-panel
+    width: 100vw
+    height: 100vh
+    display: grid
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 
+    grid-template-rows: 1fr 6vh 1fr 1fr 6vh 1fr
+    grid-gap: 1%
+    justify-content: center
+    background-image: url('../../img/background3.jpg')
+    background-repeat: no-repeat
+    background-size: cover
+
+.cards-zone
+    display: flex
+    justify-content: space-evenly
+    grid-column: span 5
+    align-items: center
+
+.temp-zone
+    grid-column: 5
+    display: flex
+    justify-content: center
+    align-items: center
+    background: rgba(255,255 ,255 ,.3 )
+    border-radius: 5%
+    border: 2px dotted whitesmoke
+
+.card
+    display: flex
+    justify-content: center
+    align-items: center
+    width: 7vw
+    height: 20vh
+    cursor: pointer
+
+    &--played
+        transform: rotate(10deg)
+.discards
+    display: flex
+    justify-content: center
+    align-items: center
+    grid-column: 6
+    background: #ff730083
+    border-radius: 5%
+    border: 2px dotted whitesmoke
+
+.user
+    display: flex
+    justify-content: center
+    align-items: center
+    grid-column: 6
+    background-color: whitesmoke
+.info
+    width: 9vw
+    height: 7vh
+    display: flex
+    justify-content: center
+    align-items: center
+    color: white
+    transform: skew(-5deg)
+    border: .3vw solid white
+    border-radius: .5vw
+    font-size: 1.5vw
+    animation-name: bounce
+    animation-duration: 2s
+    animation-timing-function: linear
+    animation-iteration-count: infinite
+
+    &--life
+        grid-column: 1
+        background: linear-gradient(to bottom right, #00ff00 0%, #009900 100%)
+    &--defense
+        grid-column: 2
+        background: linear-gradient(to bottom right, #00a2ff 0%, #006199 100%)
+    &--attack
+        grid-column: 3
+        background: linear-gradient(to bottom right, #994a00 0%, #ff8800 100%)
+    &--pass
+        grid-column: 4
+        background: linear-gradient(to bottom right, #ffe600 0%, #998f00 100%)
+        cursor: pointer
+        &:hover
+            border-color: #009900
+    &--exit
+        grid-column: 5
+        background: linear-gradient(to bottom right, #990000 0%, #ff3300 100%)
+        cursor: pointer
+        &:hover
+            border-color: #009900
+
+@keyframes bounce
+    0%
+        transform: skew(-5deg)
+    50%
+        transform: skew(5deg)
+    100%
+        transform: skew(-5deg)

@@ -1,0 +1,44 @@
+.home
+    position: relative
+    width: 100vw
+    height: 100vh
+    background-image: url('img/background.jpg')
+    background-repeat: no-repeat
+    background-size: cover
+    color: whitesmoke
+    display: flex
+    flex-wrap: wrap
+    justify-content: center
+    align-items: center
+    &__option
+        min-width: 20vw
+        min-height: 50vh
+        border: 1px solid whitesmoke
+        border-radius: 2%
+        margin: 0 3% 0 3%
+        display: flex
+        justify-content: center
+        align-items: center
+        cursor: pointer
+        &:hover
+            background: #ffffff94
+        &--small
+            min-height: 5vh
+            margin: 2% 0
+    &__side
+        display: flex
+        flex-direction: column
+        justify-content: space-around
+        align-items: center
+.home-footer
+    position: absolute
+    bottom: 0
+    width: 100vw
+    display: flex
+    justify-content: space-evenly
+    &__item
+        margin: 0 3% 0 3%
+        cursor: pointer
+
+        &:hover
+            color: yellow

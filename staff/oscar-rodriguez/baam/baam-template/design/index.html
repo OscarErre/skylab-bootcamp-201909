@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link href="https://fonts.googleapis.com/css?family=Londrina+Outline|Rajdhani|Righteous&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="index.css">
+    <title>Tasks App</title>
+</head>
+
+<body>
+    <section class="landing">
+        <h1 class="landing__title">Welcome to BAAM!!</h1>
+        <section class="landing__login login">
+            <form class="login__form" action="#">
+                <input type="text" name="username" placeholder="username">
+                <input type="password" name="password" placeholder="passwword">
+                <button>Login</button>
+            </form>
+        </section>
+        <div class="landing__go-register">New here? <a href="#">Sign-up</a> and create an account</div>
+    </section>
+
+    <section class="register">
+        <h1 class="register__title">Register your account</h1>
+        <form class="register__form" action="#">
+            <label for="name">Name: <input type="text" name="name" placeholder="name"></label>
+            <label for="surname">Surname: <input type="text" name="surname" placeholder="surname"></label>
+            <label for="email">E-mail: <input type="mail" name="email" placeholder="email"></label>
+            <label for="username">Username: <input type="text" name="username" placeholder="username"></label>
+            <label for="username">Password: <input type="password" name="password" placeholder="passwword"></label>
+            <button>Register</button>
+        </form>
+        <div class="register__what-is what-is">
+            <h2 class="what-is__title">What is Baam!!?</h2>
+            <p class="what-is__text">Baam is an strategy versus game. In Baam, you will collect and win new cards to complete your collection.</p>
+            <p class="what-is__text">Using your collection you will choose your favorite cards, to create an strategy and try to deffeat your oponent.</p>
+            <p class="what-is__text">Let's figth!</p>
+        </div>
+    </section>
+
+    <section class="home">
+        <div class="upper-menu">
+            <div class="upper-menu__container">
+                <div class="upper-menu__item">wins: 5</div>
+                <div class="upper-menu__item">ties: 2</div>
+                <div class="upper-menu__item">loses: 3</div>
+            </div>
+            <div class="upper-menu__container">
+                <div class="upper-menu__item">username</div>
+            </div>
+        </div>
+        <section class="home__option">
+            Your cards
+        </section>
+        <section class="home__option">
+            Get new cards
+        </section>
+        <section class="home__option">
+            New game
+        </section>
+        <div class="home__side">
+            <section class="home__option home__option--small">
+                Rewards
+            </section>
+            <section class="home__option home__option--small">
+                Ranking
+            </section>
+            <section class="home__option home__option--small">
+                Invite Friends
+            </section>
+            <section class="home__option home__option--small">
+                The collections
+            </section>
+        </div>
+        <div class="home__footer home-footer">
+            <span class="home__footer home-footer__item">About Baam!!</span> - 
+            <span class="home__footer home-footer__item">Report a bug</span> - 
+            <span class="home__footer home-footer__item">Contact Us</span> - 
+            <span class="home__footer home-footer__item">Make your Card suggeriments</span>
+        </div>
+    </section>
+    <section class="your-cards">
+        <div class="upper-menu">
+            <div class="upper-menu__container">
+                <div class="upper-menu__item">Get New Cards!</div>
+            </div>
+        </div>
+        <div class="your-cards__title">YOUR CARDS:</div>
+        <div class="your-cards__card-detail">
+                <div class="slide-row">◀︎</div>
+                <div class ="slide-detail">THIS IS A CARD</div>
+                <div class ="slide-detail">THIS IS A CARD</div>
+                <div class ="slide-detail">THIS IS A CARD</div>
+                <div class ="slide-detail">THIS IS A CARD</div>
+                <div class ="slide-detail">THIS IS A CARD</div>
+                <div class="slide-row">▶︎</div>
+            </div>
+    </section>
+    <section class="new-cards">
+        <div class="upper-menu">
+            <div class="upper-menu__container">
+                <div class="upper-menu__item">Coins: 500</div>
+            </div>
+        </div>
+        <div class="new-cards__title">TODAY, YOU CAN CHOOSE BETWEEN THIS CARDS:</div>
+        <div class="new-cards__random random">
+                <div class ="random__card">THIS IS A CARD</div>
+                <div class ="random__card">THIS IS A CARD</div>
+                <div class ="random__card">THIS IS A CARD</div>
+        </div>
+        <div class="user-game-menu">USER GAME MENU OPTIONS</div>
+    </section>
+    <section class="select-hand">
+        <div class="select-hand__title">SELECT YOUR HAND:</div>
+        <div class="select-hand__card-detail">
+            <div class="slide-row">◀︎</div>
+            <div class ="slide-detail">THIS IS A CARD</div>
+            <div class="slide-row">▶︎</div>
+        </div>
+        <div class="select-hand__selected">
+                <div class="card card">1</div><div class="card card">2</div><div class="card card">3</div><div class="card card">4</div><div class="card card">5</div><div class="card card">6</div><div class="card card">7</div><div class="card card">8</div>
+        </div>
+        <div class="user-game-menu">USER GAME MENU OPTIONS</div>
+    </section>
+    <section class="game-panel">
+        <div class="cards-zone"><div class="card card--oponent">1</div><div class="card card--oponent">2</div><div class="card card--oponent">3</div><div class="card card--oponent">4</div><div class="card card--oponent">5</div><div class="card card--oponent">6</div><div class="card card--oponent">7</div><div class="card card--oponent">8</div></div><div class="life">LIFE</div>
+        <div class="game-zone">GAME ZONE</div><div class="temp-zone">TEMP ZONE</div><div class="life">DISCARDS</div>
+        <div class="temp-zone">TEMP ZONE</div><div class="life">DISCARDS</div>
+        <div class="cards-zone"><div class="card card">1</div><div class="card card">2</div><div class="card card">3</div><div class="card card">4</div><div class="card card">5</div><div class="card card">6</div><div class="card card">7</div><div class="card card">8</div></div><div class="life">LIFE</div>
+        <div class="user-game-menu">USER GAME MENU OPTIONS</div>
+    </section>
+</body>
+
+</html>
